@@ -1,0 +1,532 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: DonaTrack API Gateway
+meta:
+  id: wrk_gateway_001
+  created: 1749420000000
+  modified: 1749420000000
+  description: "Requests via API Gateway — prefix /api/{modulo}. Importar y elegir entorno Render o Local."
+collection:
+
+  - name: Gateway
+    meta:
+      id: fld_gateway_001
+      sortKey: -5000
+      description: Endpoints propios del gateway
+    children:
+      - url: "{{gatewayUrl}}/"
+        name: GET info
+        meta:
+          id: req_gw_info
+          sortKey: -100
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{gatewayUrl}}/health"
+        name: GET health (agregado)
+        meta:
+          id: req_gw_health
+          sortKey: -90
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{gatewayUrl}}/actuator/health"
+        name: GET actuator/health
+        meta:
+          id: req_gw_act_health
+          sortKey: -80
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+
+  - name: "01 — DyE"
+    meta:
+      id: fld_dye_001
+      sortKey: -4000
+      description: "{{dyeUrl}}"
+    children:
+      - url: "{{dyeUrl}}/actuator/health"
+        name: health
+        meta:
+          id: req_dye_health
+          sortKey: -100
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/donadores"
+        name: POST donadores
+        meta:
+          id: req_dye_post_don
+          sortKey: -90
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Juan",
+              "apellido": "Perez",
+              "edad": 30,
+              "email": "juan.e2e@test.com",
+              "nroDocumento": "12345678",
+              "domicilio": "Calle 123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/donadores"
+        name: GET donadores
+        meta:
+          id: req_dye_get_don
+          sortKey: -80
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/donadores/{{donador_id}}"
+        name: GET donadores/:id
+        meta:
+          id: req_dye_get_don_id
+          sortKey: -70
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/donadores/{{donador_id}}/puede-donar"
+        name: GET puede-donar
+        meta:
+          id: req_dye_puede
+          sortKey: -60
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/donadores/{{donador_id}}/estadisticas"
+        name: GET estadisticas
+        meta:
+          id: req_dye_stats
+          sortKey: -50
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/entidades"
+        name: POST entidades
+        meta:
+          id: req_dye_ent
+          sortKey: -40
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Comedor Barrial",
+              "descripcion": "Entidad de prueba E2E"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/necesidades"
+        name: POST necesidades
+        meta:
+          id: req_dye_nec
+          sortKey: -30
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "entidadID": "{{entidad_id}}",
+              "productoSolicitadoID": "{{producto_id}}",
+              "cantidadObjetivo": 10,
+              "tipo": "EXTRAORDINARIA"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/necesidades?productoID={{producto_id}}"
+        name: GET necesidades por producto
+        meta:
+          id: req_dye_nec_get
+          sortKey: -20
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/admin/db"
+        name: GET admin/db
+        meta:
+          id: req_dye_admin_get
+          sortKey: -10
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{dyeUrl}}/admin/db"
+        name: DELETE admin/db
+        meta:
+          id: req_dye_admin_del
+          sortKey: 0
+        method: DELETE
+        settings:
+          encodeUrl: true
+          followRedirects: global
+
+  - name: "02 — Donaciones"
+    meta:
+      id: fld_don_001
+      sortKey: -3000
+    children:
+      - url: "{{donacionesUrl}}/actuator/health"
+        name: health
+        meta:
+          id: req_don_health
+          sortKey: -100
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{donacionesUrl}}/identificadores"
+        name: POST identificadores
+        meta:
+          id: req_don_id
+          sortKey: -90
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "tipo": "QR",
+              "descripcion": "QR E2E"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{donacionesUrl}}/categorias"
+        name: POST categorias
+        meta:
+          id: req_don_cat
+          sortKey: -80
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Alimentos",
+              "descripcion": "Categoria E2E"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{donacionesUrl}}/productos"
+        name: POST productos
+        meta:
+          id: req_don_prod
+          sortKey: -70
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Arroz",
+              "descripcion": "Producto E2E",
+              "categoriaID": "{{categoria_id}}",
+              "identificadorID": "{{identificador_id}}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{donacionesUrl}}/donaciones"
+        name: POST donaciones
+        meta:
+          id: req_don_don
+          sortKey: -60
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "donadorID": "{{donador_id}}",
+              "depositoID": "{{deposito_id}}",
+              "descripcion": "Donacion E2E via gateway",
+              "productoID": "{{producto_id}}",
+              "cantidad": 10
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{donacionesUrl}}/admin/db"
+        name: DELETE admin/db
+        meta:
+          id: req_don_admin
+          sortKey: -50
+        method: DELETE
+        settings:
+          encodeUrl: true
+          followRedirects: global
+
+  - name: "03 — Logistica"
+    meta:
+      id: fld_log_001
+      sortKey: -2000
+    children:
+      - url: "{{logisticaUrl}}/actuator/health"
+        name: health
+        meta:
+          id: req_log_health
+          sortKey: -100
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{logisticaUrl}}/depositos"
+        name: POST depositos
+        meta:
+          id: req_log_dep
+          sortKey: -90
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Deposito E2E",
+              "direccion": "Av. Test 123",
+              "capacidadMaxima": 1000
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{logisticaUrl}}/depositos/{{deposito_id}}"
+        name: PATCH algoritmoMM
+        meta:
+          id: req_log_mm
+          sortKey: -80
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "algoritmoMM": "PRIORIDAD_POR_SCORE"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{logisticaUrl}}/depositos/{{deposito_id}}"
+        name: GET depositos/:id (stock)
+        meta:
+          id: req_log_dep_get
+          sortKey: -70
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{logisticaUrl}}/depositos/{{deposito_id}}/donaciones"
+        name: POST gestionar donacion
+        meta:
+          id: req_log_gest
+          sortKey: -60
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "donacionID": "{{donacion_id}}",
+              "productoID": "{{producto_id}}",
+              "cantidad": 10
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{logisticaUrl}}/entregas"
+        name: POST entregas
+        meta:
+          id: req_log_ent
+          sortKey: -50
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "id": "{{paquete_id}}",
+              "donacionID": "{{donacion_id}}",
+              "producto": "{{producto_id}}",
+              "cantidad": 10
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+
+  - name: "04 — Incentivos"
+    meta:
+      id: fld_inc_001
+      sortKey: -1000
+    children:
+      - url: "{{incentivosUrl}}/actuator/health"
+        name: health
+        meta:
+          id: req_inc_health
+          sortKey: -100
+        method: GET
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{incentivosUrl}}/insignias"
+        name: POST insignias
+        meta:
+          id: req_inc_ins
+          sortKey: -90
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Donador Estrella",
+              "descripcion": "Insignia E2E"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{incentivosUrl}}/mision"
+        name: POST mision
+        meta:
+          id: req_inc_mis
+          sortKey: -80
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nombre": "Donaciones Exitosas",
+              "descripcion": "Mision E2E",
+              "insigniaID": "{{insignia_id}}",
+              "categoriaInicio": "BRONCE",
+              "categoriaFin": "PLATA",
+              "tipo": "DONACIONES_EXITOSAS"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{incentivosUrl}}/donadores/{{donador_id}}/mision"
+        name: POST asignar mision
+        meta:
+          id: req_inc_asig
+          sortKey: -70
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "misionID": "{{mision_id}}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          encodeUrl: true
+          followRedirects: global
+      - url: "{{incentivosUrl}}/donadores/{{donador_id}}/procesar"
+        name: POST procesar donador
+        meta:
+          id: req_inc_proc
+          sortKey: -60
+        method: POST
+        settings:
+          encodeUrl: true
+          followRedirects: global
+
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_gateway_001
+    created: 1749420000000
+    modified: 1749420000000
+
+environments:
+  name: Base Environment
+  meta:
+    id: env_gateway_base
+    created: 1749420000000
+    modified: 1749420000000
+    isPrivate: false
+  data:
+    gatewayUrl: http://localhost:8080
+    dyeUrl: "{{ _.gatewayUrl }}/api/dye"
+    donacionesUrl: "{{ _.gatewayUrl }}/api/donaciones"
+    logisticaUrl: "{{ _.gatewayUrl }}/api/logistica"
+    incentivosUrl: "{{ _.gatewayUrl }}/api/incentivos"
+    donador_id: ""
+    entidad_id: ""
+    producto_id: ""
+    categoria_id: ""
+    identificador_id: ""
+    deposito_id: ""
+    donacion_id: ""
+    paquete_id: ""
+    insignia_id: ""
+    mision_id: ""
+  subEnvironments:
+    - name: Render (Gateway)
+      meta:
+        id: env_gateway_render
+        created: 1749420000000
+        modified: 1749420000000
+        isPrivate: false
+        sortKey: 1
+      data:
+        gatewayUrl: https://api-gateway-1ujg.onrender.com
+        dyeUrl: "{{ _.gatewayUrl }}/api/dye"
+        donacionesUrl: "{{ _.gatewayUrl }}/api/donaciones"
+        logisticaUrl: "{{ _.gatewayUrl }}/api/logistica"
+        incentivosUrl: "{{ _.gatewayUrl }}/api/incentivos"
+        donador_id: ""
+        entidad_id: ""
+        producto_id: ""
+        categoria_id: ""
+        identificador_id: ""
+        deposito_id: ""
+        donacion_id: ""
+        paquete_id: ""
+        insignia_id: ""
+        mision_id: ""

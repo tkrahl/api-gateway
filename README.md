@@ -86,6 +86,17 @@ mvn test
 2. Aplicar Blueprint (`render.yaml`) o crear Web Service Docker
 3. Configurar `DDAPI` y URLs si difieren del default
 
+## Documentacion API
+
+| Archivo | Uso |
+|---------|-----|
+| [`docs/resources/donatrack-api-gateway.yaml`](./docs/resources/donatrack-api-gateway.yaml) | OpenAPI 3.0 — importar en Swagger UI / SwaggerHub |
+| [`docs/resources/insomnia.yaml`](./docs/resources/insomnia.yaml) | Coleccion Insomnia — **Import → From File** |
+
+**Insomnia:** elegir entorno **Render (Gateway)** (`https://api-gateway-1ujg.onrender.com`).
+
+**Swagger local:** pegar el YAML en [editor.swagger.io](https://editor.swagger.io) o servir con springdoc si se agrega despues.
+
 ## Próximas mejoras posibles
 
 - API key / JWT para comandos admin del bot

@@ -1,0 +1,529 @@
+openapi: 3.0.3
+info:
+  title: DonaTrack — API Gateway
+  version: "1.0.0"
+  description: |
+    Punto de entrada unico HTTP para clientes externos (bot Telegram, Postman, Insomnia, e2e).
+
+    ## Enrutamiento
+
+    | Prefix gateway | Backend |
+    |----------------|---------|
+    | `/api/dye/**` | Donadores y Entidades |
+    | `/api/donaciones/**` | Donaciones |
+    | `/api/logistica/**` | Logistica |
+    | `/api/incentivos/**` | Incentivos |
+
+    El gateway aplica `StripPrefix=2` (quita `/api/{modulo}`) antes de proxear.
+
+    ## Headers agregados
+
+    - `X-Gateway-Route`: dye | donaciones | logistica | incentivos
+    - `X-Request-Id`: UUID de correlacion (generado si el cliente no lo envia)
+    - `X-Forwarded-By`: donatrack-api-gateway
+
+    ## Specs de backends
+
+    OpenAPI completos por modulo en sus repos (`docs/resources/*.yaml`).
+
+servers:
+  - url: https://api-gateway-1ujg.onrender.com
+    description: Produccion (Render)
+  - url: http://localhost:8080
+    description: Local
+
+tags:
+  - name: Gateway
+    description: Endpoints propios del API Gateway
+  - name: DyE
+    description: Proxied a Donadores y Entidades (`/api/dye`)
+  - name: Donaciones
+    description: Proxied a Donaciones (`/api/donaciones`)
+  - name: Logistica
+    description: Proxied a Logistica (`/api/logistica`)
+  - name: Incentivos
+    description: Proxied a Incentivos (`/api/incentivos`)
+
+paths:
+  /:
+    get:
+      tags: [Gateway]
+      summary: Informacion del gateway y rutas
+      operationId: gatewayInfo
+      responses:
+        "200":
+          description: Metadata del gateway
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayInfo"
+
+  /health:
+    get:
+      tags: [Gateway]
+      summary: Health del gateway y estado agregado de backends
+      operationId: gatewayHealth
+      responses:
+        "200":
+          description: Gateway UP (backends pueden estar DEGRADED)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayHealth"
+
+  /actuator/health:
+    get:
+      tags: [Gateway]
+      summary: Spring Actuator health
+      operationId: actuatorHealth
+      responses:
+        "200":
+          description: Health del proceso gateway
+
+  /actuator/metrics:
+    get:
+      tags: [Gateway]
+      summary: Metricas Micrometer del gateway
+      operationId: actuatorMetrics
+      responses:
+        "200":
+          description: Lista de metricas
+
+  # ─── DyE (ejemplos principales) ─────────────────────────────────────────────
+
+  /api/dye/donadores:
+    post:
+      tags: [DyE]
+      summary: Crear donador
+      operationId: dyeCrearDonador
+      x-proxy-backend: donadores-entidades
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DonadorRequest"
+      responses:
+        "200":
+          description: Donador creado
+    get:
+      tags: [DyE]
+      summary: Listar donadores
+      operationId: dyeListarDonadores
+      x-proxy-backend: donadores-entidades
+      responses:
+        "200":
+          description: Lista de donadores
+
+  /api/dye/donadores/{donadorID}:
+    get:
+      tags: [DyE]
+      summary: Obtener donador por ID
+      operationId: dyeObtenerDonador
+      x-proxy-backend: donadores-entidades
+      parameters:
+        - $ref: "#/components/parameters/DonadorID"
+      responses:
+        "200":
+          description: Donador encontrado
+        "404":
+          description: No encontrado
+
+  /api/dye/donadores/{donadorID}/puede-donar:
+    get:
+      tags: [DyE]
+      summary: Consultar si el donador puede donar
+      operationId: dyePuedeDonar
+      x-proxy-backend: donadores-entidades
+      parameters:
+        - $ref: "#/components/parameters/DonadorID"
+      responses:
+        "200":
+          description: Resultado de validacion
+
+  /api/dye/donadores/{donadorID}/estadisticas:
+    get:
+      tags: [DyE]
+      summary: Estadisticas del donador
+      operationId: dyeEstadisticas
+      x-proxy-backend: donadores-entidades
+      parameters:
+        - $ref: "#/components/parameters/DonadorID"
+      responses:
+        "200":
+          description: Estadisticas
+
+  /api/dye/entidades:
+    post:
+      tags: [DyE]
+      summary: Crear entidad benefica
+      operationId: dyeCrearEntidad
+      x-proxy-backend: donadores-entidades
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntidadRequest"
+      responses:
+        "201":
+          description: Entidad creada
+    get:
+      tags: [DyE]
+      summary: Listar entidades
+      operationId: dyeListarEntidades
+      x-proxy-backend: donadores-entidades
+      responses:
+        "200":
+          description: Lista de entidades
+
+  /api/dye/necesidades:
+    post:
+      tags: [DyE]
+      summary: Registrar necesidad material
+      operationId: dyeRegistrarNecesidad
+      x-proxy-backend: donadores-entidades
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NecesidadRequest"
+      responses:
+        "201":
+          description: Necesidad creada
+    get:
+      tags: [DyE]
+      summary: Listar necesidades (filtro productoID opcional)
+      operationId: dyeListarNecesidades
+      x-proxy-backend: donadores-entidades
+      parameters:
+        - name: productoID
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de necesidades
+
+  /api/dye/admin/db:
+    get:
+      tags: [DyE]
+      summary: Estado de la base de datos
+      operationId: dyeAdminDbGet
+      x-proxy-backend: donadores-entidades
+      responses:
+        "200":
+          description: Conteos por tabla
+    delete:
+      tags: [DyE]
+      summary: Limpiar base de datos
+      operationId: dyeAdminDbDelete
+      x-proxy-backend: donadores-entidades
+      responses:
+        "200":
+          description: DB limpiada
+
+  # ─── Donaciones ─────────────────────────────────────────────────────────────
+
+  /api/donaciones/donaciones:
+    post:
+      tags: [Donaciones]
+      summary: Registrar donacion
+      operationId: donRegistrarDonacion
+      x-proxy-backend: donaciones
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DonacionRequest"
+      responses:
+        "201":
+          description: Donacion registrada
+        "401":
+          description: Donador no apto
+
+  /api/donaciones/productos:
+    post:
+      tags: [Donaciones]
+      summary: Crear producto
+      operationId: donCrearProducto
+      x-proxy-backend: donaciones
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductoRequest"
+      responses:
+        "201":
+          description: Producto creado
+
+  /api/donaciones/categorias:
+    post:
+      tags: [Donaciones]
+      summary: Crear categoria
+      operationId: donCrearCategoria
+      x-proxy-backend: donaciones
+      responses:
+        "201":
+          description: Categoria creada
+
+  /api/donaciones/identificadores:
+    post:
+      tags: [Donaciones]
+      summary: Crear identificador
+      operationId: donCrearIdentificador
+      x-proxy-backend: donaciones
+      responses:
+        "201":
+          description: Identificador creado
+
+  /api/donaciones/admin/db:
+    get:
+      tags: [Donaciones]
+      summary: Estado DB
+      operationId: donAdminDbGet
+      x-proxy-backend: donaciones
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Donaciones]
+      summary: Limpiar DB
+      operationId: donAdminDbDelete
+      x-proxy-backend: donaciones
+      responses:
+        "200":
+          description: OK
+
+  # ─── Logistica ──────────────────────────────────────────────────────────────
+
+  /api/logistica/depositos:
+    post:
+      tags: [Logistica]
+      summary: Crear deposito
+      operationId: logCrearDeposito
+      x-proxy-backend: logistica
+      responses:
+        "201":
+          description: Deposito creado
+    get:
+      tags: [Logistica]
+      summary: Listar depositos
+      operationId: logListarDepositos
+      x-proxy-backend: logistica
+      responses:
+        "200":
+          description: Lista
+
+  /api/logistica/depositos/{depositoID}/donaciones:
+    post:
+      tags: [Logistica]
+      summary: Gestionar donacion en deposito (matchmaking)
+      operationId: logGestionarDonacion
+      x-proxy-backend: logistica
+      parameters:
+        - $ref: "#/components/parameters/DepositoID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GestionarDonacionRequest"
+      responses:
+        "201":
+          description: Asignacion creada
+        "204":
+          description: Sin necesidad que matchee
+
+  /api/logistica/depositos/{depositoID}:
+    get:
+      tags: [Logistica]
+      summary: Obtener deposito (incluye stock)
+      operationId: logObtenerDeposito
+      x-proxy-backend: logistica
+      parameters:
+        - $ref: "#/components/parameters/DepositoID"
+      responses:
+        "200":
+          description: Deposito con stock
+
+  /api/logistica/entregas:
+    post:
+      tags: [Logistica]
+      summary: Reportar entrega
+      operationId: logReportarEntrega
+      x-proxy-backend: logistica
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaqueteRequest"
+      responses:
+        "200":
+          description: Entrega reportada
+
+  # ─── Incentivos ─────────────────────────────────────────────────────────────
+
+  /api/incentivos/insignias:
+    post:
+      tags: [Incentivos]
+      summary: Crear insignia
+      operationId: incCrearInsignia
+      x-proxy-backend: incentivos
+      responses:
+        "201":
+          description: Insignia creada
+    get:
+      tags: [Incentivos]
+      summary: Listar insignias
+      operationId: incListarInsignias
+      x-proxy-backend: incentivos
+      responses:
+        "200":
+          description: Lista
+
+  /api/incentivos/mision:
+    post:
+      tags: [Incentivos]
+      summary: Crear mision
+      operationId: incCrearMision
+      x-proxy-backend: incentivos
+      responses:
+        "201":
+          description: Mision creada
+
+  /api/incentivos/donadores/{donadorID}/mision:
+    post:
+      tags: [Incentivos]
+      summary: Asignar mision a donador
+      operationId: incAsignarMision
+      x-proxy-backend: incentivos
+      parameters:
+        - $ref: "#/components/parameters/DonadorID"
+      responses:
+        "200":
+          description: Mision asignada
+
+  /api/incentivos/donadores/{donadorID}/procesar:
+    post:
+      tags: [Incentivos]
+      summary: Procesar donador (insignias / misiones)
+      operationId: incProcesarDonador
+      x-proxy-backend: incentivos
+      parameters:
+        - $ref: "#/components/parameters/DonadorID"
+      responses:
+        "200":
+          description: Procesado
+
+components:
+  parameters:
+    DonadorID:
+      name: donadorID
+      in: path
+      required: true
+      schema:
+        type: string
+    DepositoID:
+      name: depositoID
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    GatewayInfo:
+      type: object
+      properties:
+        service:
+          type: string
+          example: donatrack-api-gateway
+        version:
+          type: string
+        routes:
+          type: object
+        features:
+          type: array
+          items:
+            type: string
+
+    GatewayHealth:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DEGRADED]
+        gateway:
+          type: string
+          example: UP
+        backends:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+              error:
+                type: string
+
+    DonadorRequest:
+      type: object
+      properties:
+        nombre: { type: string }
+        apellido: { type: string }
+        edad: { type: integer }
+        email: { type: string }
+        nroDocumento: { type: string }
+        domicilio: { type: string }
+
+    EntidadRequest:
+      type: object
+      properties:
+        nombre: { type: string }
+        descripcion: { type: string }
+
+    NecesidadRequest:
+      type: object
+      properties:
+        entidadID: { type: string }
+        productoSolicitadoID: { type: string }
+        cantidadObjetivo: { type: integer }
+        tipo:
+          type: string
+          enum: [RECURRENTE, EXTRAORDINARIA]
+
+    DonacionRequest:
+      type: object
+      properties:
+        donadorID: { type: string }
+        depositoID: { type: string }
+        descripcion: { type: string }
+        productoID: { type: string }
+        cantidad: { type: integer }
+
+    ProductoRequest:
+      type: object
+      properties:
+        nombre: { type: string }
+        descripcion: { type: string }
+        categoriaID: { type: string }
+        identificadorID: { type: string }
+
+    GestionarDonacionRequest:
+      type: object
+      properties:
+        donacionID: { type: string }
+        productoID: { type: string }
+        cantidad: { type: integer }
+
+    PaqueteRequest:
+      type: object
+      properties:
+        id: { type: string }
+        donacionID: { type: string }
+        producto: { type: string }
+        cantidad: { type: integer }
