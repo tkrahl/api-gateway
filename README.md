@@ -2,11 +2,13 @@
 
 Punto de entrada único HTTP para clientes externos (bot Telegram, Postman, e2e).
 
+**Producción:** https://api-gateway-1ujg.onrender.com
+
 ## ¿Por qué un API Gateway?
 
 | Beneficio | Qué resuelve en DonaTrack |
 |-----------|---------------------------|
-| **Un solo URL** | El bot y Postman apuntan a `https://api-gateway.onrender.com` en vez de recordar 4 URLs |
+| **Un solo URL** | El bot y Postman apuntan a `https://api-gateway-1ujg.onrender.com` en vez de recordar 4 URLs |
 | **Ocultar backends** | Los microservicios no se exponen directamente a clientes externos |
 | **Rate limiting** | Protege Render free tier ante picos o loops accidentales (120 req/min por IP, configurable) |
 | **CORS centralizado** | El bot/web puede llamar desde cualquier origen sin tocar cada módulo |
@@ -34,7 +36,7 @@ Ejemplo:
 curl https://donadores-entidades.onrender.com/donadores
 
 # Ahora (vía gateway)
-curl https://<gateway-host>/api/dye/donadores
+curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 ```
 
 ## Features incluidas
