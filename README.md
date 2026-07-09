@@ -20,10 +20,12 @@ Punto de entrada único HTTP para clientes externos (bot Telegram, Postman, e2e)
 
 | Prefix gateway | Backend |
 |----------------|---------|
-| `/dye/**` | Donadores y Entidades |
-| `/donaciones/**` | Donaciones |
-| `/logistica/**` | Logística |
-| `/incentivos/**` | Incentivos |
+| `/api/dye/**` | Donadores y Entidades |
+| `/api/donaciones/**` | Donaciones |
+| `/api/logistica/**` | Logística |
+| `/api/incentivos/**` | Incentivos |
+
+Endpoints propios del gateway (fuera de `/api`): `GET /`, `GET /health`, `/actuator/**`
 
 Ejemplo:
 
@@ -32,12 +34,12 @@ Ejemplo:
 curl https://donadores-entidades.onrender.com/donadores
 
 # Ahora (vía gateway)
-curl https://<gateway-host>/dye/donadores
+curl https://<gateway-host>/api/dye/donadores
 ```
 
 ## Features incluidas
 
-- **Routing** con `StripPrefix` (quita `/dye`, `/donaciones`, etc.)
+- **Routing** con `StripPrefix=2` (quita `/api/{modulo}` antes de proxear)
 - **Rate limit** in-memory por IP (ventana fija de 1 minuto, sin Redis)
 - **CORS** configurable
 - **Request logging** + header `X-Request-Id`
@@ -67,7 +69,7 @@ mvn spring-boot:run
 ```bash
 curl http://localhost:8080/
 curl http://localhost:8080/health
-curl http://localhost:8080/dye/donadores
+curl http://localhost:8080/api/dye/donadores
 ```
 
 ## Tests

@@ -88,16 +88,16 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
   }
 
   static String resolveRoute(String path) {
-    if (path.startsWith("/dye")) {
+    if (path.startsWith("/api/dye")) {
       return "dye";
     }
-    if (path.startsWith("/donaciones")) {
+    if (path.startsWith("/api/donaciones")) {
       return "donaciones";
     }
-    if (path.startsWith("/logistica")) {
+    if (path.startsWith("/api/logistica")) {
       return "logistica";
     }
-    if (path.startsWith("/incentivos")) {
+    if (path.startsWith("/api/incentivos")) {
       return "incentivos";
     }
     if (path.equals("/health") || path.equals("/")) {

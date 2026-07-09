@@ -53,7 +53,7 @@ class GatewayRouteIntegrationTest {
 
     webTestClient
         .get()
-        .uri("/dye/actuator/health")
+        .uri("/api/dye/actuator/health")
         .exchange()
         .expectStatus()
         .isOk()
@@ -78,6 +78,6 @@ class GatewayRouteIntegrationTest {
         .jsonPath("$.service")
         .isEqualTo("donatrack-api-gateway")
         .jsonPath("$.routes.dye.prefix")
-        .isEqualTo("/dye");
+        .isEqualTo("/api/dye");
   }
 }

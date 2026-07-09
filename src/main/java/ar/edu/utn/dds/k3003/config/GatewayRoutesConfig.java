@@ -15,29 +15,29 @@ public class GatewayRoutesConfig {
         .route(
             "dye",
             r ->
-                r.path("/dye/**")
-                    .filters(f -> f.stripPrefix(1).addRequestHeader("X-Gateway-Route", "dye"))
+                r.path("/api/dye/**")
+                    .filters(f -> f.stripPrefix(2).addRequestHeader("X-Gateway-Route", "dye"))
                     .uri(props.dyeUrl()))
         .route(
             "donaciones",
             r ->
-                r.path("/donaciones/**")
+                r.path("/api/donaciones/**")
                     .filters(
-                        f -> f.stripPrefix(1).addRequestHeader("X-Gateway-Route", "donaciones"))
+                        f -> f.stripPrefix(2).addRequestHeader("X-Gateway-Route", "donaciones"))
                     .uri(props.donacionesUrl()))
         .route(
             "logistica",
             r ->
-                r.path("/logistica/**")
+                r.path("/api/logistica/**")
                     .filters(
-                        f -> f.stripPrefix(1).addRequestHeader("X-Gateway-Route", "logistica"))
+                        f -> f.stripPrefix(2).addRequestHeader("X-Gateway-Route", "logistica"))
                     .uri(props.logisticaUrl()))
         .route(
             "incentivos",
             r ->
-                r.path("/incentivos/**")
+                r.path("/api/incentivos/**")
                     .filters(
-                        f -> f.stripPrefix(1).addRequestHeader("X-Gateway-Route", "incentivos"))
+                        f -> f.stripPrefix(2).addRequestHeader("X-Gateway-Route", "incentivos"))
                     .uri(props.incentivosUrl()))
         .build();
   }

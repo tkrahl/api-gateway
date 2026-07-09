@@ -26,13 +26,13 @@ public class GatewayInfoController {
   @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   public Map<String, Object> info() {
     Map<String, Object> routes = new LinkedHashMap<>();
-    routes.put("dye", Map.of("prefix", "/dye", "target", properties.dyeUrl()));
+    routes.put("dye", Map.of("prefix", "/api/dye", "target", properties.dyeUrl()));
     routes.put(
-        "donaciones", Map.of("prefix", "/donaciones", "target", properties.donacionesUrl()));
+        "donaciones", Map.of("prefix", "/api/donaciones", "target", properties.donacionesUrl()));
     routes.put(
-        "logistica", Map.of("prefix", "/logistica", "target", properties.logisticaUrl()));
+        "logistica", Map.of("prefix", "/api/logistica", "target", properties.logisticaUrl()));
     routes.put(
-        "incentivos", Map.of("prefix", "/incentivos", "target", properties.incentivosUrl()));
+        "incentivos", Map.of("prefix", "/api/incentivos", "target", properties.incentivosUrl()));
 
     return Map.of(
         "service",
