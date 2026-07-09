@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: api-gateway
+    runtime: docker
+    plan: free
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: DDAPI
+        sync: false
+      - key: APP_ENV
+        value: produccion
+      - key: DYE_URL
+        value: https://donadores-entidades.onrender.com
+      - key: DONACIONES_URL
+        value: https://donaciones-dgs7.onrender.com
+      - key: LOGISTICA_URL
+        value: https://logisticaweb.onrender.com
+      - key: INCENTIVOS_URL
+        value: https://incentivos-movn.onrender.com
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_RPM
+        value: "120"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "*"
