@@ -11,6 +11,7 @@ public class GatewayProperties {
   private String incentivosUrl = "https://incentivos-movn.onrender.com";
   private RateLimit rateLimit = new RateLimit();
   private Cors cors = new Cors();
+  private int healthBackendTimeoutSec = 45;
 
   public String dyeUrl() {
     return dyeUrl;
@@ -58,6 +59,14 @@ public class GatewayProperties {
 
   public void setCors(Cors cors) {
     this.cors = cors;
+  }
+
+  public int healthBackendTimeoutSec() {
+    return healthBackendTimeoutSec;
+  }
+
+  public void setHealthBackendTimeoutSec(int healthBackendTimeoutSec) {
+    this.healthBackendTimeoutSec = healthBackendTimeoutSec;
   }
 
   public static class RateLimit {

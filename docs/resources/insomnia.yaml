@@ -1,0 +1,715 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: DonaTrack API Gateway
+meta:
+  id: wrk_da4e04b69a77a61d8407fdc40d8ad11a
+  created: 1780900000000
+  modified: 1780900000000
+  description: Requests via API Gateway. Elegir entorno Render (Gateway) o Local.
+collection:
+
+  - url: "{{gatewayUrl}}/"
+    name: "GW | GET info"
+    meta:
+      id: req_edd69c9488848da85cbd26a7313f561c
+      created: 1780900000001
+      modified: 1780900000001
+      isPrivate: false
+      description: ""
+      sortKey: -10000
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{gatewayUrl}}/health"
+    name: "GW | GET health"
+    meta:
+      id: req_755728ac71c42232e1d96bc09b89566f
+      created: 1780900000002
+      modified: 1780900000002
+      isPrivate: false
+      description: ""
+      sortKey: -9900
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}actuator/health"
+    name: "DyE | health"
+    meta:
+      id: req_32369d35326dfa8846972b929e5caeaa
+      created: 1780900000101
+      modified: 1780900000101
+      isPrivate: false
+      description: ""
+      sortKey: -9000
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}donadores"
+    name: "DyE | POST donadores"
+    meta:
+      id: req_c3ec1afe75eda63c3eee7c3a68bbb172
+      created: 1780900000102
+      modified: 1780900000102
+      isPrivate: false
+      description: ""
+      sortKey: -8900
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Juan",
+          "apellido": "Perez",
+          "edad": 30,
+          "email": "juan.e2e@test.com",
+          "nroDocumento": "12345678",
+          "domicilio": "Calle 123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}donadores"
+    name: "DyE | GET donadores"
+    meta:
+      id: req_c64efcf950810e399b9b723363f1c57e
+      created: 1780900000103
+      modified: 1780900000103
+      isPrivate: false
+      description: ""
+      sortKey: -8800
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}donadores/{{donador_id}}"
+    name: "DyE | GET donador por id"
+    meta:
+      id: req_e669ddec809e2d054f56d7fca21af85f
+      created: 1780900000104
+      modified: 1780900000104
+      isPrivate: false
+      description: ""
+      sortKey: -8700
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}donadores/{{donador_id}}/puede-donar"
+    name: "DyE | GET puede-donar"
+    meta:
+      id: req_2ac99fdcd83277c735d90a9e40bddc02
+      created: 1780900000105
+      modified: 1780900000105
+      isPrivate: false
+      description: ""
+      sortKey: -8600
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}donadores/{{donador_id}}/estadisticas"
+    name: "DyE | GET estadisticas"
+    meta:
+      id: req_45cb1bbd42b0d60c8ebc200a5fcf60e4
+      created: 1780900000106
+      modified: 1780900000106
+      isPrivate: false
+      description: ""
+      sortKey: -8500
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}entidades"
+    name: "DyE | POST entidades"
+    meta:
+      id: req_72591c559ee94d9c65b92fe0f60ba035
+      created: 1780900000107
+      modified: 1780900000107
+      isPrivate: false
+      description: ""
+      sortKey: -8400
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Comedor Barrial",
+          "descripcion": "Entidad E2E"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{dyeUrl}}necesidades"
+    name: "DyE | POST necesidades"
+    meta:
+      id: req_23ff2f6897ac784314e1557dd5c4d9a1
+      created: 1780900000108
+      modified: 1780900000108
+      isPrivate: false
+      description: ""
+      sortKey: -8300
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "entidadID": "{{entidad_id}}",
+          "productoSolicitadoID": "{{producto_id}}",
+          "cantidadObjetivo": 10,
+          "tipo": "EXTRAORDINARIA"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{donacionesUrl}}actuator/health"
+    name: "Donaciones | health"
+    meta:
+      id: req_ee8e9e74b9e0a823e6f577abceb1d750
+      created: 1780900000201
+      modified: 1780900000201
+      isPrivate: false
+      description: ""
+      sortKey: -8000
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{donacionesUrl}}identificadores"
+    name: "Donaciones | POST identificadores"
+    meta:
+      id: req_5dd6a1e285e822b91f96e31300e29635
+      created: 1780900000202
+      modified: 1780900000202
+      isPrivate: false
+      description: ""
+      sortKey: -7900
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "tipo": "QR",
+          "descripcion": "QR E2E"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{donacionesUrl}}categorias"
+    name: "Donaciones | POST categorias"
+    meta:
+      id: req_afa509317398d710fac1c9447e7109c1
+      created: 1780900000203
+      modified: 1780900000203
+      isPrivate: false
+      description: ""
+      sortKey: -7800
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Alimentos",
+          "descripcion": "Categoria E2E"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{donacionesUrl}}productos"
+    name: "Donaciones | POST productos"
+    meta:
+      id: req_408538ac3997bcae45f62db8f5078cc4
+      created: 1780900000204
+      modified: 1780900000204
+      isPrivate: false
+      description: ""
+      sortKey: -7700
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Arroz",
+          "descripcion": "Producto E2E",
+          "categoriaID": "{{categoria_id}}",
+          "identificadorID": "{{identificador_id}}"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{donacionesUrl}}donaciones"
+    name: "Donaciones | POST donaciones"
+    meta:
+      id: req_a02fbc758d55dfc0ef2779e7cae265ff
+      created: 1780900000205
+      modified: 1780900000205
+      isPrivate: false
+      description: ""
+      sortKey: -7600
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "donadorID": "{{donador_id}}",
+          "depositoID": "{{deposito_id}}",
+          "descripcion": "Donacion E2E via gateway",
+          "productoID": "{{producto_id}}",
+          "cantidad": 10
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{logisticaUrl}}actuator/health"
+    name: "Logistica | health"
+    meta:
+      id: req_f705cd51c213f8ad0c716403745d8e6f
+      created: 1780900000301
+      modified: 1780900000301
+      isPrivate: false
+      description: ""
+      sortKey: -7000
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{logisticaUrl}}depositos"
+    name: "Logistica | POST depositos"
+    meta:
+      id: req_c50f53d97d650dc46fe3d900451fcdd7
+      created: 1780900000302
+      modified: 1780900000302
+      isPrivate: false
+      description: ""
+      sortKey: -6900
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Deposito E2E",
+          "direccion": "Av. Test 123",
+          "capacidadMaxima": 1000
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{logisticaUrl}}depositos/{{deposito_id}}"
+    name: "Logistica | PATCH algoritmoMM"
+    meta:
+      id: req_a23507eea24caf566b5b1af48ec407e5
+      created: 1780900000303
+      modified: 1780900000303
+      isPrivate: false
+      description: ""
+      sortKey: -6800
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "algoritmoMM": "PRIORIDAD_POR_SCORE"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{logisticaUrl}}depositos/{{deposito_id}}"
+    name: "Logistica | GET deposito (stock)"
+    meta:
+      id: req_a96b4757918739d5482d40bf28b22dcb
+      created: 1780900000304
+      modified: 1780900000304
+      isPrivate: false
+      description: ""
+      sortKey: -6700
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{logisticaUrl}}depositos/{{deposito_id}}/donaciones"
+    name: "Logistica | POST gestionar donacion"
+    meta:
+      id: req_56b0129fe02c0dd7eeeeee12fa6b2e83
+      created: 1780900000305
+      modified: 1780900000305
+      isPrivate: false
+      description: ""
+      sortKey: -6600
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "donacionID": "{{donacion_id}}",
+          "productoID": "{{producto_id}}",
+          "cantidad": 10
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{logisticaUrl}}entregas"
+    name: "Logistica | POST entregas"
+    meta:
+      id: req_6f3b04c77084f575058c4e10e0ecf5fa
+      created: 1780900000306
+      modified: 1780900000306
+      isPrivate: false
+      description: ""
+      sortKey: -6500
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "{{paquete_id}}",
+          "donacionID": "{{donacion_id}}",
+          "producto": "{{producto_id}}",
+          "cantidad": 10
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{incentivosUrl}}actuator/health"
+    name: "Incentivos | health"
+    meta:
+      id: req_09baa4aa3595cec083d5fa2e09fbf416
+      created: 1780900000401
+      modified: 1780900000401
+      isPrivate: false
+      description: ""
+      sortKey: -6000
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{incentivosUrl}}insignias"
+    name: "Incentivos | POST insignias"
+    meta:
+      id: req_e9d2f828a88c13ac0ddada0f9590bffa
+      created: 1780900000402
+      modified: 1780900000402
+      isPrivate: false
+      description: ""
+      sortKey: -5900
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Donador Estrella",
+          "descripcion": "Insignia E2E"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{incentivosUrl}}mision"
+    name: "Incentivos | POST mision"
+    meta:
+      id: req_010a40be964f2b97d5beac487cd5e6ff
+      created: 1780900000403
+      modified: 1780900000403
+      isPrivate: false
+      description: ""
+      sortKey: -5800
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Donaciones Exitosas",
+          "descripcion": "Mision E2E",
+          "insigniaID": "{{insignia_id}}",
+          "categoriaInicio": "BRONCE",
+          "categoriaFin": "PLATA",
+          "tipo": "DONACIONES_EXITOSAS"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{incentivosUrl}}donadores/{{donador_id}}/mision"
+    name: "Incentivos | POST asignar mision"
+    meta:
+      id: req_5656789887ec743ebc685e4ea80eb1b0
+      created: 1780900000404
+      modified: 1780900000404
+      isPrivate: false
+      description: ""
+      sortKey: -5700
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "misionID": "{{mision_id}}"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{incentivosUrl}}donadores/{{donador_id}}/procesar"
+    name: "Incentivos | POST procesar"
+    meta:
+      id: req_cca2041db393dbef8d613417864713f7
+      created: 1780900000405
+      modified: 1780900000405
+      isPrivate: false
+      description: ""
+      sortKey: -5600
+    method: POST
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_540c7b4c16f5448ad801690718b5b62c
+    created: 1780900000000
+    modified: 1780900000000
+
+environments:
+  name: Base Environment
+  meta:
+    id: env_a2b80c7fe691e83c3247824c80f96d3d
+    created: 1780900000000
+    modified: 1780900000000
+    isPrivate: false
+  data:
+    gatewayUrl: http://localhost:8080
+    dyeUrl: http://localhost:8080/api/dye/
+    donacionesUrl: http://localhost:8080/api/donaciones/
+    logisticaUrl: http://localhost:8080/api/logistica/
+    incentivosUrl: http://localhost:8080/api/incentivos/
+    donador_id: ""
+    entidad_id: ""
+    producto_id: ""
+    categoria_id: ""
+    identificador_id: ""
+    deposito_id: ""
+    donacion_id: ""
+    paquete_id: ""
+    insignia_id: ""
+    mision_id: ""
+  subEnvironments:
+    - name: Render (Gateway)
+      meta:
+        id: env_a4b02b182d35c35790cfa8720d149ec6
+        created: 1780900001000
+        modified: 1780900001000
+        isPrivate: false
+        sortKey: 1
+      data:
+        gatewayUrl: https://api-gateway-1ujg.onrender.com
+        dyeUrl: https://api-gateway-1ujg.onrender.com/api/dye/
+        donacionesUrl: https://api-gateway-1ujg.onrender.com/api/donaciones/
+        logisticaUrl: https://api-gateway-1ujg.onrender.com/api/logistica/
+        incentivosUrl: https://api-gateway-1ujg.onrender.com/api/incentivos/
+        donador_id: ""
+        entidad_id: ""
+        producto_id: ""
+        categoria_id: ""
+        identificador_id: ""
+        deposito_id: ""
+        donacion_id: ""
+        paquete_id: ""
+        insignia_id: ""
+        mision_id: ""

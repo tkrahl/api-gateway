@@ -62,7 +62,7 @@ public class GatewayInfoController {
                     .uri(entry.getValue())
                     .retrieve()
                     .bodyToMono(String.class)
-                    .timeout(Duration.ofSeconds(8))
+                    .timeout(Duration.ofSeconds(properties.healthBackendTimeoutSec()))
                     .map(body -> Map.entry(entry.getKey(), (Object) Map.of("status", "UP")))
                     .onErrorResume(
                         error ->
