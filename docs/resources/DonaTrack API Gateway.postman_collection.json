@@ -1,0 +1,2211 @@
+{
+  "info": {
+    "_postman_id": "914de8eb-8490-4638-8d49-22e84d3b58cb",
+    "name": "DonaTrack API Gateway",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48114580"
+  },
+  "item": [
+    {
+      "name": "Donaciones",
+      "item": [
+        {
+          "name": "POST identificadores (QR)",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"QR\",\n  \"descripcion\": \"Identificador QR para textiles\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/identificadores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "identificadores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST identificadores (CodigoDeBarras)",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"CODIGODEBARRAS\",\n  \"descripcion\": \"Codigo de barras para alimentos envasados\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/identificadores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "identificadores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET identificadores",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/identificadores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "identificadores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST categorias",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Indumentaria\",\n  \"descripcion\": \"Ropa y accesorios de todo tipo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET categorias",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST productos",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Campera\",\n  \"descripcion\": \"Campera de abrigo talle L invierno\",\n  \"categoriaID\": \"ed8cf7f5-cc38-41a3-b691-15e3e3af1271\",\n  \"identificadorID\": \"bd9e0c56-0567-4303-acfb-86e91eefe057\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/productos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET productos",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/productos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET productos/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/productos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "productos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_PRODUCTO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT productos/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Campera actualizada\",\n  \"descripcion\": \"Campera de abrigo talle XL invierno\",\n  \"categoriaID\": \"REEMPLAZAR_CON_ID_CATEGORIA\",\n  \"identificadorID\": \"REEMPLAZAR_CON_ID_IDENTIFICADOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/productos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "productos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_PRODUCTO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE productos/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/productos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "productos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_PRODUCTO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST donaciones",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donadorID\": \"REEMPLAZAR_CON_ID_DONADOR\",\n  \"depositoID\": \"REEMPLAZAR_CON_ID_DEPOSITO\",\n  \"descripcion\": \"Donacion de ropa de invierno\",\n  \"productoID\": \"REEMPLAZAR_CON_ID_PRODUCTO\",\n  \"cantidad\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET donaciones",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET donaciones/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DONACION"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET donaciones/search",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones/search?donadorID=REEMPLAZAR_CON_ID_DONADOR&fechaInicio=2026-01-01",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "donadorID",
+                  "value": "REEMPLAZAR_CON_ID_DONADOR"
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": "2026-01-01"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH donaciones/:id/estado",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\"ACEPTADA\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones/:id/estado",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones",
+                ":id",
+                "estado"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DONACION"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST donaciones/:id/queja",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"El producto llego en mal estado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones/:id/queja",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones",
+                ":id",
+                "queja"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DONACION"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE donaciones/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donaciones/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donaciones",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DONACION"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET admin/db (ver estado)",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/admin/db",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "admin",
+                "db"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE admin/db (limpiar todo)",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/admin/db",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "admin",
+                "db"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET actuator/health",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/actuator/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Donadores y Entidades",
+      "item": [
+        {
+          "name": "Maintenance",
+          "item": [
+            {
+              "name": "health",
+              "protocolProfileBehavior": {
+                "followRedirects": true,
+                "disableUrlEncoding": false,
+                "disableCookies": false
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/dye/actuator/health",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "dye",
+                    "actuator",
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "db",
+              "protocolProfileBehavior": {
+                "followRedirects": true,
+                "disableUrlEncoding": false,
+                "disableCookies": false
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/dye/admin/db",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "dye",
+                    "admin",
+                    "db"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "db",
+              "protocolProfileBehavior": {
+                "followRedirects": true,
+                "disableUrlEncoding": false,
+                "disableCookies": false
+              },
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/dye/admin/db",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "dye",
+                    "admin",
+                    "db"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "donadores",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \"nombre\": \"Juan\",   \"apellido\": \"Perez\",   \"edad\": 30,   \"email\": \"juan@test.com\",   \"nroDocumento\": \"12345678\",   \"domicilio\": \"Calle 123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donaciones/donadores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donaciones",
+                "donadores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id/estado",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{  \"estado\": \"BANEADO\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id/estado",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id",
+                "estado"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "11196709-1a0e-478c-aac0-93da83cebc5b"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id/categoria",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{  \"categoria\": \"wachins\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id/categoria",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id",
+                "categoria"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id/puede-donar",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id/puede-donar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id",
+                "puede-donar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id/estadisticas",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id/estadisticas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id",
+                "estadisticas"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id/quejas",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donacionID\": \"4321\",\n  \"descripcion\": \"Juancito esta re quejoso\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id/quejas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id",
+                "quejas"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "donadores/:id/quejas",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dye/donadores/:id/quejas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "donadores",
+                ":id",
+                "quejas"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "entidades",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dye/entidades/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "entidades",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "entidades/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dye/entidades/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "entidades",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "entidades",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razonSocial\": \"UTN SO\",\n  \"domicilio\": \"Medrano 951\",\n  \"telefono\": \"115328219\",\n\t\"correo\": \"utn@frba.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dye/entidades",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "entidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "necesidades",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entidadID\": \"1\",\n  \"nivelDeUrgencia\": \"6\",\n  \"descripcion\": \"Necesitamos 8 sillas para el comedor\",\n  \"productoSolicitadoID\": \"1\",\n  \"cantidadObjetivo\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dye/necesidades",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "necesidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "necesidades",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dye/necesidades/?productoID=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "necesidades",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "productoID",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "necesidades/:id/satisfaccion",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cantidad\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/dye/necesidades/:id/satisfaccion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dye",
+                "necesidades",
+                ":id",
+                "satisfaccion"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Incentivos",
+      "item": [
+        {
+          "name": "Insignias",
+          "item": [
+            {
+              "name": "POST insignias",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Primera Donacion\",\n  \"descripcion\": \"Insignia por completar la primera donacion exitosa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/insignias",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "insignias"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET insignias",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/insignias",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "insignias"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET insignias/:id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/insignias/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "insignias",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_INSIGNIA"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Misiones",
+          "item": [
+            {
+              "name": "POST misiones",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"De Colaborador a Transformador\",\n  \"insigniaID\": \"REEMPLAZAR_CON_ID_INSIGNIA\",\n  \"categoriaInicio\": \"COLABORADOR\",\n  \"categoriaFin\": \"TRANSFORMADOR\",\n  \"tipo\": \"DONACIONES_EXITOSAS\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/misiones",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "misiones"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET misiones",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/misiones",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "misiones"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET misiones/:id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/misiones/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "misiones",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_MISION"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Donadores",
+          "item": [
+            {
+              "name": "GET donadores/:id/insignias",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/donadores/:id/insignias",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "donadores",
+                    ":id",
+                    "insignias"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_DONADOR"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST donadores/:id/insignias",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"REEMPLAZAR_CON_ID_INSIGNIA\",\n  \"nombre\": \"Primera Donacion\",\n  \"descripcion\": \"Insignia por completar la primera donacion exitosa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/donadores/:id/insignias",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "donadores",
+                    ":id",
+                    "insignias"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_DONADOR"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET donadores/:id/mision",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/donadores/:id/mision",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "donadores",
+                    ":id",
+                    "mision"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_DONADOR"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST donadores/:id/mision",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"REEMPLAZAR_CON_ID_MISION\",\n  \"nombre\": \"De Colaborador a Transformador\",\n  \"insigniaID\": \"REEMPLAZAR_CON_ID_INSIGNIA\",\n  \"categoriaInicio\": \"COLABORADOR\",\n  \"categoriaFin\": \"TRANSFORMADOR\",\n  \"tipo\": \"DONACIONES_EXITOSAS\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/donadores/:id/mision",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "donadores",
+                    ":id",
+                    "mision"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_DONADOR"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "POST donadores/:id/procesar",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/donadores/:id/procesar",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "donadores",
+                    ":id",
+                    "procesar"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "REEMPLAZAR_CON_ID_DONADOR"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Admin",
+          "item": [
+            {
+              "name": "DELETE admin/reset",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/admin/reset",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "admin",
+                    "reset"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Metricas",
+          "item": [
+            {
+              "name": "GET actuator/health",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/actuator/health",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "actuator",
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET actuator/metrics (todas)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/actuator/metrics",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "actuator",
+                    "metrics"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET metrics — insignias creadas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/actuator/metrics/incentivos.insignias.creadas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "actuator",
+                    "metrics",
+                    "incentivos.insignias.creadas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET metrics — misiones creadas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/actuator/metrics/incentivos.misiones.creadas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "actuator",
+                    "metrics",
+                    "incentivos.misiones.creadas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET metrics — donadores procesados",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/actuator/metrics/incentivos.donadores.procesados",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "actuator",
+                    "metrics",
+                    "incentivos.donadores.procesados"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET metrics — misiones completadas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/actuator/metrics/incentivos.misiones.completadas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "actuator",
+                    "metrics",
+                    "incentivos.misiones.completadas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET actuator/prometheus",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/incentivos/actuator/prometheus",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "incentivos",
+                    "actuator",
+                    "prometheus"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Logística",
+      "item": [
+        {
+          "name": "POST depositos",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Deposito Central\",\n  \"direccion\": \"Av. Corrientes 1234\",\n  \"capacidadMaxima\": 1000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/logistica//api/logistica/depositos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "",
+                "api",
+                "logistica",
+                "depositos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET depositos",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica//api/logistica/depositos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "",
+                "api",
+                "logistica",
+                "depositos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET depositos/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica/depositos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "depositos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DEPOSITO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE depositos/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica/depositos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "depositos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DEPOSITO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST depositos/:id/donaciones",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donacionID\": \"REEMPLAZAR_CON_ID_DONACION\",\n  \"productoID\": \"REEMPLAZAR_CON_ID_PRODUCTO\",\n  \"cantidad\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/logistica/depositos/:id/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "depositos",
+                ":id",
+                "donaciones"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_DEPOSITO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET asignaciones/:id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica/asignaciones/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "asignaciones",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REEMPLAZAR_CON_ID_ASIGNACION"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST entregas",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"REEMPLAZAR_CON_ID_PAQUETE\",\n  \"donacionID\": \"REEMPLAZAR_CON_ID_DONACION\",\n  \"producto\": \"REEMPLAZAR_CON_ID_PRODUCTO\",\n  \"cantidad\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/logistica/entregas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "entregas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET admin/db (ver estado)",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica/admin/db",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "admin",
+                "db"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE admin/db (limpiar todo)",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica/admin/db",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "admin",
+                "db"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET actuator/health",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logistica/actuator/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logistica",
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GET Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}",
+          "host": [
+            "{{base_url}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Actuator",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/actuator",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "actuator"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
