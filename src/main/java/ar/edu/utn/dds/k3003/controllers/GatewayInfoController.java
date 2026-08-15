@@ -42,7 +42,7 @@ public class GatewayInfoController {
         "routes",
         routes,
         "features",
-        List.of("routing", "rate-limit", "cors", "request-logging", "correlation-id", "metrics"));
+        List.of("routing", "cors", "request-logging", "correlation-id", "metrics"));
   }
 
   @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)

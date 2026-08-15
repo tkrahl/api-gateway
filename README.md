@@ -10,7 +10,6 @@ Punto de entrada único HTTP para clientes externos (bot Telegram, Postman, e2e)
 |-----------|---------------------------|
 | **Un solo URL** | El bot y Postman apuntan a `https://api-gateway-1ujg.onrender.com` en vez de recordar 4 URLs |
 | **Ocultar backends** | Los microservicios no se exponen directamente a clientes externos |
-| **Rate limiting** | Protege Render free tier ante picos o loops accidentales (120 req/min por IP, configurable) |
 | **CORS centralizado** | El bot/web puede llamar desde cualquier origen sin tocar cada módulo |
 | **Trazabilidad** | `X-Request-Id` propagado a todos los backends + logs y métricas `gateway.requests` |
 | **Health agregado** | `GET /health` consulta los 4 módulos en un solo request |
@@ -42,7 +41,6 @@ curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 ## Features incluidas
 
 - **Routing** con `StripPrefix=2` (quita `/api/{modulo}` antes de proxear)
-- **Rate limit** in-memory por IP (ventana fija de 1 minuto, sin Redis)
 - **CORS** configurable
 - **Request logging** + header `X-Request-Id`
 - **Métricas** Micrometer → Datadog (`app:api-gateway`)
@@ -57,8 +55,6 @@ curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 | `LOGISTICA_URL` | logisticaweb.onrender.com | Backend Logística |
 | `INCENTIVOS_URL` | incentivos-movn.onrender.com | Backend Incentivos |
 | `DDAPI` | — | API key Datadog |
-| `RATE_LIMIT_ENABLED` | `true` | Activar rate limit |
-| `RATE_LIMIT_RPM` | `120` | Requests por minuto por IP |
 | `CORS_ALLOWED_ORIGINS` | `*` | Orígenes CORS (coma-separados) |
 | `PORT` | `8080` | Puerto (Render lo setea) |
 
@@ -101,5 +97,4 @@ mvn test
 
 - API key / JWT para comandos admin del bot
 - Circuit breaker (Resilience4j) si un backend cae
-- Redis para rate limit distribuido (multi-instancia)
 - Cache de lecturas frecuentes (`GET /insignias`, catálogo)

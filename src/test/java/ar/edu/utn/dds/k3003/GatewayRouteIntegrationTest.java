@@ -40,7 +40,6 @@ class GatewayRouteIntegrationTest {
     registry.add("gateway.donaciones-url", () -> base);
     registry.add("gateway.logistica-url", () -> base);
     registry.add("gateway.incentivos-url", () -> base);
-    registry.add("gateway.rate-limit.enabled", () -> "false");
   }
 
   @Test

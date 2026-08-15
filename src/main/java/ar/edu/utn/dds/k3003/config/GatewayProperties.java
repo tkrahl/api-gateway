@@ -9,7 +9,6 @@ public class GatewayProperties {
   private String donacionesUrl = "https://donaciones-dgs7.onrender.com";
   private String logisticaUrl = "https://logisticaweb.onrender.com";
   private String incentivosUrl = "https://incentivos-movn.onrender.com";
-  private RateLimit rateLimit = new RateLimit();
   private Cors cors = new Cors();
   private int healthBackendTimeoutSec = 45;
 
@@ -45,14 +44,6 @@ public class GatewayProperties {
     this.incentivosUrl = incentivosUrl;
   }
 
-  public RateLimit rateLimit() {
-    return rateLimit;
-  }
-
-  public void setRateLimit(RateLimit rateLimit) {
-    this.rateLimit = rateLimit;
-  }
-
   public Cors cors() {
     return cors;
   }
@@ -67,27 +58,6 @@ public class GatewayProperties {
 
   public void setHealthBackendTimeoutSec(int healthBackendTimeoutSec) {
     this.healthBackendTimeoutSec = healthBackendTimeoutSec;
-  }
-
-  public static class RateLimit {
-    private boolean enabled = true;
-    private int requestsPerMinute = 120;
-
-    public boolean enabled() {
-      return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-      this.enabled = enabled;
-    }
-
-    public int requestsPerMinute() {
-      return requestsPerMinute;
-    }
-
-    public void setRequestsPerMinute(int requestsPerMinute) {
-      this.requestsPerMinute = requestsPerMinute;
-    }
   }
 
   public static class Cors {

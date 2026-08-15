@@ -19,9 +19,5 @@ services:
         value: https://logisticaweb.onrender.com
       - key: INCENTIVOS_URL
         value: https://incentivos-movn.onrender.com
-      - key: RATE_LIMIT_ENABLED
-        value: "true"
-      - key: RATE_LIMIT_RPM
-        value: "120"
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
