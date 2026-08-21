@@ -1,0 +1,3275 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DonaTrack — Status</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A9%BA%3C/text%3E%3C/svg%3E" />
+    <style>
+      :root {
+        --bg: #0b0f17;
+        --bg-elev: #121826;
+        --bg-elev-2: #182034;
+        --border: #232c42;
+        --text: #e6edf7;
+        --text-dim: #9aa5bd;
+        --text-muted: #6b7691;
+        --accent: #6aa9ff;
+        --accent-strong: #4d8cff;
+        --up: #22c55e;
+        --up-bg: rgba(34, 197, 94, 0.14);
+        --up-border: rgba(34, 197, 94, 0.35);
+        --down: #ef4444;
+        --down-bg: rgba(239, 68, 68, 0.14);
+        --down-border: rgba(239, 68, 68, 0.35);
+        --warn: #f59e0b;
+        --warn-bg: rgba(245, 158, 11, 0.14);
+        --warn-border: rgba(245, 158, 11, 0.35);
+        --unknown: #64748b;
+        --unknown-bg: rgba(100, 116, 139, 0.16);
+        --unknown-border: rgba(100, 116, 139, 0.35);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        --radius: 14px;
+        --radius-sm: 10px;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f5f7fb;
+          --bg-elev: #ffffff;
+          --bg-elev-2: #f0f3f9;
+          --border: #e2e8f0;
+          --text: #0f172a;
+          --text-dim: #475569;
+          --text-muted: #64748b;
+          --up-bg: rgba(34, 197, 94, 0.12);
+          --down-bg: rgba(239, 68, 68, 0.10);
+          --warn-bg: rgba(245, 158, 11, 0.12);
+          --unknown-bg: rgba(100, 116, 139, 0.12);
+          --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 600px at 10% -10%, rgba(77, 140, 255, 0.12), transparent 60%),
+          radial-gradient(900px 500px at 100% 10%, rgba(34, 197, 94, 0.08), transparent 60%), var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+          "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 24px 64px;
+      }
+
+      header.top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%);
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: -0.01em;
+      }
+
+      .subtitle {
+        color: var(--text-dim);
+        font-size: 13px;
+        margin-top: 2px;
+      }
+
+      .updated {
+        color: var(--text-dim);
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .updated strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .global-status {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 22px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        margin-bottom: 20px;
+        box-shadow: var(--shadow);
+        flex-wrap: wrap;
+      }
+
+      .global-status .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--unknown);
+        box-shadow: 0 0 0 4px var(--unknown-bg);
+      }
+
+      .dot.up {
+        background: var(--up);
+        box-shadow: 0 0 0 4px var(--up-bg);
+        animation: pulse 2s infinite;
+      }
+
+      .dot.down {
+        background: var(--down);
+        box-shadow: 0 0 0 4px var(--down-bg);
+      }
+
+      .dot.warn {
+        background: var(--warn);
+        box-shadow: 0 0 0 4px var(--warn-bg);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 4px var(--up-bg);
+        }
+        50% {
+          box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.05);
+        }
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn,
+      .select {
+        background: var(--bg-elev-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 9px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease;
+        font-family: inherit;
+      }
+
+      .btn:hover:not(:disabled),
+      .select:hover {
+        background: #1e2740;
+        border-color: #2d3855;
+      }
+
+      @media (prefers-color-scheme: light) {
+        .btn:hover:not(:disabled),
+        .select:hover {
+          background: #e6ecf5;
+        }
+      }
+
+      .btn:focus-visible,
+      .select:focus-visible,
+      .toggle input:focus-visible + .track {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn.primary {
+        background: var(--accent-strong);
+        border-color: var(--accent-strong);
+        color: white;
+      }
+
+      .btn.primary:hover:not(:disabled) {
+        background: #3b7bff;
+        border-color: #3b7bff;
+      }
+
+      .btn.warn {
+        background: var(--warn-bg);
+        border-color: var(--warn-border);
+        color: var(--warn);
+      }
+
+      .btn.warn:hover:not(:disabled) {
+        background: rgba(245, 158, 11, 0.22);
+        border-color: var(--warn);
+      }
+
+      .btn.warn .spinner {
+        border: 2px solid rgba(245, 158, 11, 0.35);
+        border-top-color: var(--warn);
+      }
+
+      .btn.sm {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .btn .spinner {
+        display: none;
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        vertical-align: -2px;
+        margin-right: 6px;
+      }
+
+      .btn.loading .spinner {
+        display: inline-block;
+      }
+
+      .card-actions {
+        margin-top: 14px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-actions[hidden] {
+        display: none;
+      }
+
+      .wake-status {
+        margin-top: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        word-break: break-word;
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        display: none;
+      }
+
+      .wake-status.ok {
+        background: var(--up-bg);
+        border-color: var(--up-border);
+        color: var(--up);
+      }
+
+      .wake-status.fail {
+        background: var(--down-bg);
+        border-color: var(--down-border);
+        color: var(--down);
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 13px;
+        color: var(--text-dim);
+      }
+
+      .toggle input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .toggle .track {
+        width: 34px;
+        height: 20px;
+        border-radius: 999px;
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        position: relative;
+        transition: background 0.15s ease;
+      }
+
+      .toggle .track::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--text-dim);
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+
+      .toggle input:checked + .track {
+        background: var(--accent-strong);
+        border-color: var(--accent-strong);
+      }
+
+      .toggle input:checked + .track::after {
+        transform: translateX(14px);
+        background: white;
+      }
+
+      .card {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        transition: border-color 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--unknown);
+        transition: background 0.2s ease;
+      }
+
+      .card.up::before {
+        background: var(--up);
+      }
+      .card.down::before {
+        background: var(--down);
+      }
+      .card.warn::before {
+        background: var(--warn);
+      }
+      .card.loading::before {
+        background: var(--accent);
+      }
+
+      .card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .card-title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .card-title .name {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .card-title .url {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        word-break: break-all;
+        max-width: 100%;
+      }
+
+      .gateway-card {
+        margin-bottom: 20px;
+      }
+
+      .card-title .kicker {
+        color: var(--text-muted);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        background: var(--unknown-bg);
+        color: var(--unknown);
+        border: 1px solid var(--unknown-border);
+        white-space: nowrap;
+      }
+
+      .badge.up {
+        color: var(--up);
+        background: var(--up-bg);
+        border-color: var(--up-border);
+      }
+
+      .badge.down {
+        color: var(--down);
+        background: var(--down-bg);
+        border-color: var(--down-border);
+      }
+
+      .badge.warn {
+        color: var(--warn);
+        background: var(--warn-bg);
+        border-color: var(--warn-border);
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 16px;
+        margin-top: 16px;
+        font-size: 12px;
+      }
+
+      .meta .label {
+        color: var(--text-muted);
+        display: block;
+      }
+
+      .meta .value {
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+
+      .error-msg {
+        margin-top: 12px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: var(--down-bg);
+        border: 1px solid var(--down-border);
+        color: var(--down);
+        font-size: 11.5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        word-break: break-word;
+        max-height: 90px;
+        overflow: auto;
+      }
+
+      .history {
+        margin-top: 14px;
+      }
+
+      .history-label {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-muted);
+        font-size: 11px;
+        margin-bottom: 6px;
+      }
+
+      .history-bars {
+        display: flex;
+        gap: 2px;
+        height: 20px;
+        align-items: stretch;
+      }
+
+      .history-bars .bar {
+        flex: 1;
+        min-width: 3px;
+        background: var(--unknown-bg);
+        border-radius: 2px;
+        transition: background 0.2s ease;
+      }
+
+      .history-bars .bar.up {
+        background: var(--up);
+      }
+
+      .history-bars .bar.down {
+        background: var(--down);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+
+      .status-tabs {
+        display: flex;
+        gap: 6px;
+        margin: 4px 0 16px;
+        padding: 4px;
+        width: fit-content;
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+      }
+
+      .status-tab {
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+
+      .status-tab:hover {
+        color: var(--text);
+      }
+
+      .status-tab.active {
+        background: var(--bg-elev);
+        color: var(--text);
+        box-shadow: var(--shadow);
+      }
+
+      .status-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 22px;
+      }
+
+      .status-group h3 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .arch-panel {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px 12px;
+        max-width: 100%;
+      }
+
+      .arch-panel .arch-diagram {
+        min-height: 240px;
+        overflow: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .arch-panel .arch-diagram svg {
+        width: min(100%, 760px);
+        height: auto;
+      }
+
+      .arch-legend {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 8px;
+      }
+
+      .arch-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .arch-legend i {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .arch-legend .up {
+        background: var(--up);
+      }
+      .arch-legend .warn {
+        background: var(--warn);
+      }
+      .arch-legend .down {
+        background: var(--down);
+      }
+
+      footer {
+        margin-top: 40px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      footer a {
+        color: var(--text-dim);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--border);
+      }
+
+      footer a:hover {
+        color: var(--text);
+      }
+
+      .quick-links {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+
+      .quick-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      }
+
+      .quick-links a:hover {
+        color: var(--text);
+        background: var(--bg-elev-2);
+        border-color: #2d3855;
+      }
+
+      @media (prefers-color-scheme: light) {
+        .quick-links a:hover {
+          border-color: #cbd5e1;
+        }
+      }
+
+      .quick-links a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .quick-links .icon {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .quick-links .ext {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .section {
+        margin-top: 28px;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        gap: 12px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+
+      .section-title .hint {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .ops-card {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .ops-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .ops-row + .ops-row {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px dashed var(--border);
+      }
+
+      .ops-desc {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+        flex: 1 1 260px;
+      }
+
+      .ops-desc .name {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .ops-desc .hint {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .btn.danger {
+        background: var(--down-bg);
+        border-color: var(--down-border);
+        color: var(--down);
+      }
+
+      .btn.danger:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.22);
+        border-color: var(--down);
+      }
+
+      .btn.danger .spinner {
+        border: 2px solid rgba(239, 68, 68, 0.35);
+        border-top-color: var(--down);
+      }
+
+      .token-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .token-input {
+        background: var(--bg-elev-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 8px 10px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        min-width: 200px;
+        font-weight: 500;
+      }
+
+      .token-input:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-color: var(--accent);
+      }
+
+      .token-status {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      .token-status.set {
+        color: var(--up);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border-color: transparent;
+        color: var(--text-dim);
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+
+      .btn.ghost:hover:not(:disabled) {
+        color: var(--text);
+        background: var(--bg-elev-2);
+        border-color: var(--border);
+      }
+
+      .ops-result {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        font-size: 12.5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        display: none;
+        max-height: 240px;
+        overflow: auto;
+      }
+
+      .ops-result.ok {
+        background: var(--up-bg);
+        border-color: var(--up-border);
+        color: var(--up);
+      }
+
+      .ops-result.partial {
+        background: var(--warn-bg);
+        border-color: var(--warn-border);
+        color: var(--warn);
+      }
+
+      .ops-result.fail {
+        background: var(--down-bg);
+        border-color: var(--down-border);
+        color: var(--down);
+      }
+
+      .ops-result ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      .ops-result li {
+        margin-bottom: 3px;
+        word-break: break-word;
+      }
+
+      .ops-result .service-name {
+        font-weight: 700;
+      }
+
+      dialog.confirm {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-elev);
+        color: var(--text);
+        padding: 22px;
+        max-width: 440px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+      }
+
+      dialog.confirm::backdrop {
+        background: rgba(4, 8, 16, 0.6);
+        backdrop-filter: blur(2px);
+      }
+
+      dialog.confirm h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      dialog.confirm p {
+        margin: 0 0 16px;
+        color: var(--text-dim);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      dialog.confirm .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .seeds-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .e4-workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 148px;
+        gap: 24px;
+        align-items: start;
+      }
+
+      @media (max-width: 960px) {
+        .e4-workspace {
+          grid-template-columns: 1fr;
+        }
+        .e4-timeline-rail {
+          display: none;
+        }
+      }
+
+      .e4-modules {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        min-width: 0;
+      }
+
+      .e4-module {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .e4-module-head {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .e4-module-head h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .e4-module-head .count {
+        font-size: 11.5px;
+        color: var(--text-muted);
+      }
+
+      .seed-card {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        scroll-margin-top: 80px;
+        transition: opacity 0.25s ease, border-color 0.25s ease;
+      }
+
+      .seed-card.checked {
+        opacity: 0.52;
+        border-color: rgba(46, 160, 67, 0.4);
+      }
+
+      .seed-card.checked .req-title {
+        text-decoration: line-through;
+        text-decoration-color: rgba(46, 160, 67, 0.5);
+      }
+
+      .seed-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--unknown);
+        transition: background 0.2s ease;
+      }
+
+      .seed-card.running::before {
+        background: var(--accent);
+      }
+      .seed-card.done::before {
+        background: var(--up);
+      }
+      .seed-card.failed::before {
+        background: var(--down);
+      }
+      .seed-card.checked::before {
+        background: var(--up);
+      }
+
+      .seed-head-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .req-check-wrap {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding-top: 2px;
+      }
+
+      .req-check {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--up);
+        cursor: pointer;
+      }
+
+      .req-check-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      .req-title-wrap {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .req-kind {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        width: fit-content;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+      }
+
+      .req-kind.required {
+        color: #e3b341;
+        background: rgba(227, 179, 65, 0.08);
+        border-color: rgba(227, 179, 65, 0.35);
+      }
+
+      .req-kind.optional {
+        color: var(--text-muted);
+        background: var(--bg-elev-2);
+      }
+
+      .req-title {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.45;
+        color: var(--text);
+        margin: 0;
+      }
+
+      .seed-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .seed-title {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .seed-title .kicker {
+        color: var(--text-muted);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .seed-title .name {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .seed-tags {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      .seed-tags .tag {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+      }
+
+      .seed-desc {
+        font-size: 12.5px;
+        color: var(--text-dim);
+        line-height: 1.5;
+      }
+
+      .seed-guide {
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--radius-sm);
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        font-size: 12px;
+        line-height: 1.55;
+        overflow: hidden;
+      }
+
+      .seed-guide-item {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .seed-guide-item:last-child {
+        border-bottom: none;
+      }
+
+      .seed-guide-summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 10px 14px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        user-select: none;
+        transition: background 0.15s ease;
+      }
+
+      .seed-guide-summary:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .seed-guide-summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .seed-guide-summary::marker {
+        content: "";
+      }
+
+      .seed-guide-summary::after {
+        content: "▸";
+        flex-shrink: 0;
+        color: var(--text-muted);
+        font-size: 12px;
+        transition: transform 0.2s ease;
+      }
+
+      .seed-guide-item[open] .seed-guide-summary::after {
+        transform: rotate(90deg);
+      }
+
+      .seed-guide-panel {
+        padding: 0 14px 12px;
+      }
+
+      .seed-guide-body {
+        color: var(--text-dim);
+        margin: 0;
+      }
+
+      .seed-guide-list {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+        counter-reset: guide-step;
+        color: var(--text-dim);
+      }
+
+      .seed-guide-list li {
+        counter-increment: guide-step;
+        margin: 0 0 10px;
+        padding-left: 28px;
+        position: relative;
+        line-height: 1.5;
+      }
+
+      .seed-guide-list li::before {
+        content: counter(guide-step);
+        position: absolute;
+        left: 0;
+        top: 1px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        color: var(--accent);
+        font-size: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .seed-guide-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      .seed-progress {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .seed-card.running .seed-progress,
+      .seed-card.done .seed-progress,
+      .seed-card.failed .seed-progress,
+      .seed-card.has-log .seed-progress {
+        display: flex;
+      }
+
+      .seed-progress-bar {
+        height: 6px;
+        background: var(--bg-elev-2);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .seed-progress-fill {
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+        transition: width 0.25s ease, background 0.2s ease;
+      }
+
+      .seed-card.done .seed-progress-fill {
+        background: var(--up);
+      }
+
+      .seed-card.failed .seed-progress-fill {
+        background: var(--down);
+      }
+
+      .seed-progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .seed-log {
+        display: none;
+        max-height: 180px;
+        overflow: auto;
+        padding: 8px 10px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        font-size: 11.5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        line-height: 1.5;
+      }
+
+      .seed-card.running .seed-log,
+      .seed-card.done .seed-log,
+      .seed-card.failed .seed-log,
+      .seed-card.has-log .seed-log {
+        display: block;
+      }
+
+      .seed-log .line {
+        display: block;
+        color: var(--text-dim);
+        word-break: break-word;
+      }
+
+      .seed-log .line.ok {
+        color: var(--up);
+      }
+
+      .seed-log .line.info {
+        color: var(--text-dim);
+      }
+
+      .seed-log .line.error {
+        color: var(--down);
+      }
+
+      .seed-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .seed-actions .status-text {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .seed-action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .seed-actions .clean-card-btn {
+        padding: 7px 11px;
+        font-size: 12px;
+      }
+
+      .seed-actions .action-link {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .manual-hint {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.4;
+      }
+
+      .seed-card.interaction-manual .seed-automation,
+      .seed-card.interaction-bot .seed-automation {
+        display: none;
+      }
+
+      .seed-card.interaction-bot .seed-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .e4-timeline-rail {
+        position: sticky;
+        top: 16px;
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+        padding: 4px 0;
+      }
+
+      .e4-timeline-legend {
+        font-size: 9.5px;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+        line-height: 1.4;
+        padding: 0 2px;
+      }
+
+      .e4-timeline-legend .star {
+        color: #e3b341;
+      }
+
+      .e4-timeline-progress {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+        padding: 8px 8px;
+        background: var(--bg-elev-2);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        text-align: center;
+        line-height: 1.45;
+      }
+
+      .e4-timeline-progress strong {
+        color: var(--up);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .e4-timeline-progress .sub {
+        display: block;
+        font-size: 9px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      .e4-timeline {
+        position: relative;
+        padding: 0;
+      }
+
+      .e4-timeline::before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        top: 4px;
+        bottom: 4px;
+        width: 1px;
+        background: var(--border);
+      }
+
+      .e4-timeline-module {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 10px 0 4px 18px;
+      }
+
+      .e4-timeline-module:first-child {
+        margin-top: 0;
+      }
+
+      .e4-timeline-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: transparent;
+        padding: 3px 4px 3px 18px;
+        font-size: 9.5px;
+        line-height: 1.2;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background 0.15s ease, color 0.15s ease;
+        min-height: 22px;
+      }
+
+      .e4-timeline-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-dim);
+      }
+
+      .e4-timeline-item::before {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--bg-elev);
+        border: 1.5px solid var(--border);
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+      }
+
+      .e4-timeline-item.is-required .tl-star {
+        color: #e3b341;
+        font-size: 8px;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .e4-timeline-item:not(.is-required) .tl-star {
+        display: none;
+      }
+
+      .e4-timeline-item .tl-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .e4-timeline-item.checked::before {
+        background: var(--up);
+        border-color: var(--up);
+      }
+
+      .e4-timeline-item.active::before {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+      }
+
+      .e4-timeline-item.checked .tl-label {
+        color: rgba(46, 160, 67, 0.8);
+      }
+
+      .e4-timeline-item:not(.is-required) .tl-label {
+        opacity: 0.75;
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          padding: 20px 14px 40px;
+        }
+        h1 {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="top">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">◈</div>
+          <div>
+            <h1>DonaTrack — Status</h1>
+            <div class="subtitle">Estado en tiempo real del gateway, el bot y los 4 módulos</div>
+          </div>
+        </div>
+        <div class="updated" aria-live="polite" aria-atomic="true">
+          Última actualización: <strong id="lastUpdate">—</strong>
+          <form
+            method="post"
+            action="/admin/logout"
+            style="display: inline-block; margin-left: 12px"
+          >
+            <button
+              type="submit"
+              class="btn ghost"
+              title="Cerrar sesión"
+              style="padding: 4px 10px; font-size: 12px"
+            >
+              🚪 Salir
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <nav class="quick-links" aria-label="Enlaces útiles">
+        <a
+          href="https://web.postman.co/workspace/9f62ea91-1f06-4e69-8c6c-d55b1f019e9f"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Abrir workspace de Postman para demos de la Entrega 4"
+        >
+          <span class="icon" aria-hidden="true">📮</span>
+          <span>Colección · Postman</span>
+          <span class="ext" aria-hidden="true">↗</span>
+        </a>
+        <a
+          href="https://app.datadoghq.com/dashboard/lists"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Abrir Datadog en una pestaña nueva"
+        >
+          <span class="icon" aria-hidden="true">📊</span>
+          <span>Métricas · Datadog</span>
+          <span class="ext" aria-hidden="true">↗</span>
+        </a>
+        <a
+          href="https://docs.google.com/document/d/1BX32k2meTzq-Z0QoL5DfvxblH0e_YUk6AXad7ZPvhMc/edit?tab=t.0#heading=h.gilkqpoa7ykp"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Abrir enunciado de Entrega 4 en una pestaña nueva"
+        >
+          <span class="icon" aria-hidden="true">📄</span>
+          <span>Enunciado · Entrega 4</span>
+          <span class="ext" aria-hidden="true">↗</span>
+        </a>
+        <a
+          href="https://web.telegram.org/k/#@deudatecnicafcbot"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Abrir el bot de Telegram en una pestaña nueva"
+        >
+          <span class="icon" aria-hidden="true">🤖</span>
+          <span>Bot · Telegram</span>
+          <span class="ext" aria-hidden="true">↗</span>
+        </a>
+      </nav>
+
+      <section class="global-status" id="globalStatus">
+        <div class="pill">
+          <span class="dot" id="globalDot"></span>
+          <span id="globalText">Cargando…</span>
+        </div>
+        <div class="controls">
+          <button class="btn primary" id="refreshBtn" type="button" aria-label="Actualizar ahora">
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Actualizar ahora</span>
+          </button>
+          <button
+            class="btn warn"
+            id="wakeAllBtn"
+            type="button"
+            aria-label="Despertar servicios dormidos"
+            hidden
+          >
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Despertar dormidos</span>
+          </button>
+          <label class="toggle" for="autoToggle">
+            <input type="checkbox" id="autoToggle" checked />
+            <span class="track" aria-hidden="true"></span>
+            <span>Auto-refresh</span>
+          </label>
+          <select class="select" id="intervalSelect" aria-label="Intervalo de polling">
+            <option value="5000">5s</option>
+            <option value="10000" selected>10s</option>
+            <option value="15000">15s</option>
+            <option value="30000">30s</option>
+            <option value="60000">60s</option>
+          </select>
+        </div>
+      </section>
+
+      <div class="status-tabs" role="tablist" aria-label="Vista de estado">
+        <button class="status-tab active" type="button" role="tab" aria-selected="true" data-status-view="cards" id="tabCards">
+          Tarjetas
+        </button>
+        <button class="status-tab" type="button" role="tab" aria-selected="false" data-status-view="arch" id="tabArch">
+          Arquitectura
+        </button>
+      </div>
+
+      <div id="viewCards">
+        <div class="status-group">
+          <h3>Acceso</h3>
+          <div class="grid" id="edgeGrid"></div>
+        </div>
+        <div class="status-group">
+          <h3>Módulos</h3>
+          <div class="grid" id="backendGrid"></div>
+        </div>
+      </div>
+
+      <div id="viewArch" hidden>
+        <div class="arch-panel">
+          <div class="arch-diagram" id="archDiagram" role="img" aria-label="Diagrama de arquitectura"></div>
+          <div class="arch-legend">
+            <span><i class="up"></i> Conexión ok</span>
+            <span><i class="warn"></i> Desconocido / cargando</span>
+            <span><i class="down"></i> Caído</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="section" aria-labelledby="ops-title">
+        <div class="section-title">
+          <h2 id="ops-title">Datos de demo</h2>
+          <span class="hint">Operaciones administrativas sobre los 4 servicios</span>
+        </div>
+        <div class="ops-card">
+          <div class="ops-row">
+            <div class="ops-desc">
+              <span class="name">🗑 Borrar toda la data</span>
+              <span class="hint">
+                <code>DELETE /admin/clean</code> · limpia DyE + Donaciones + Logística + Incentivos en paralelo.
+                Requiere <code>ADMIN_SECRET</code> si está configurado en el gateway.
+              </span>
+            </div>
+            <button class="btn danger" id="cleanBtn" type="button">
+              <span class="spinner" aria-hidden="true"></span>
+              <span>Borrar toda la data</span>
+            </button>
+          </div>
+          <div class="ops-row">
+            <div class="ops-desc">
+              <span class="name">🔒 Token administrativo</span>
+              <span class="hint">
+                Bearer token para operaciones de <code>/admin</code>. Se guarda en
+                <code>sessionStorage</code> (se pierde al cerrar la pestaña).
+              </span>
+            </div>
+            <div class="token-row">
+              <span class="token-status" id="tokenStatus">Sin token guardado</span>
+              <input
+                type="password"
+                class="token-input"
+                id="tokenInput"
+                placeholder="ADMIN_SECRET"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="btn" id="tokenSaveBtn" type="button">Guardar</button>
+              <button class="btn ghost" id="tokenClearBtn" type="button" hidden>Borrar</button>
+            </div>
+          </div>
+          <div class="ops-result" id="cleanResult" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="seeds-title">
+        <div class="section-title">
+          <h2 id="seeds-title">Entrega 4 — prueba manual</h2>
+          <span class="hint">
+            Un punto del enunciado por tarjeta. Usá <strong>borrar data</strong> antes de cada demo.
+            Las tarjetas con API muestran <strong>Preparar escenario</strong>; las del bot abren Telegram; el resto es solo paso a paso en vivo.
+          </span>
+        </div>
+        <div class="e4-workspace" id="e4Workspace">
+          <div class="e4-modules" id="e4Modules">
+            <div class="seed-card" aria-busy="true">
+              <div class="seed-head-row">
+                <span class="req-title">Leyendo requisitos de la Entrega 4…</span>
+              </div>
+            </div>
+          </div>
+          <aside class="e4-timeline-rail" id="e4TimelineRail" aria-label="Progreso de la Entrega 4">
+            <div class="e4-timeline-progress" id="e4TimelineProgress">—</div>
+            <div class="e4-timeline-legend">
+              <span class="star" aria-hidden="true">★</span> Requerido por el enunciado
+            </div>
+            <nav class="e4-timeline" id="e4Timeline"></nav>
+          </aside>
+        </div>
+      </section>
+
+      <dialog class="confirm" id="confirmDialog" aria-labelledby="confirm-title">
+        <h3 id="confirm-title">¿Borrar toda la data?</h3>
+        <p>
+          Esto va a limpiar las bases de datos de los 4 servicios (DyE, Donaciones, Logística,
+          Incentivos). La acción es <strong>irreversible</strong>. Usalo solo antes de un
+          escenario de demo.
+        </p>
+        <form method="dialog" class="actions">
+          <button class="btn ghost" value="cancel" type="submit">Cancelar</button>
+          <button class="btn danger" id="confirmOk" value="ok" type="submit">Sí, borrar</button>
+        </form>
+      </dialog>
+
+      <footer>
+        <span>Servido desde <code>/dashboard.html</code> · chequeo independiente por servicio</span>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const DEFAULT_URLS = {
+          gateway: "https://api-gateway-1ujg.onrender.com",
+          bot: "https://telegram-bot-z236.onrender.com",
+          dye: "https://donadores-entidades.onrender.com",
+          donaciones: "https://donaciones-dgs7.onrender.com",
+          logistica: "https://logisticaweb.onrender.com",
+          incentivos: "https://incentivos-movn.onrender.com",
+        };
+
+        const EDGE = [
+          { key: "gateway", label: "API Gateway", kicker: "Acceso" },
+          { key: "bot", label: "Bot Telegram", kicker: "Acceso" },
+        ];
+
+        const BACKENDS = [
+          { key: "dye", label: "Donadores &amp; Entidades" },
+          { key: "donaciones", label: "Donaciones" },
+          { key: "logistica", label: "Logística" },
+          { key: "incentivos", label: "Incentivos" },
+        ];
+
+        const ALL_KEYS = ["gateway", "bot", "dye", "donaciones", "logistica", "incentivos"];
+
+        const HISTORY_LIMIT = 20;
+        const FETCH_TIMEOUT_MS = 50000;
+        const WAKE_TIMEOUT_MS = 120000;
+
+        const state = {
+          history: {
+            gateway: [],
+            bot: [],
+            dye: [],
+            donaciones: [],
+            logistica: [],
+            incentivos: [],
+          },
+          latency: {
+            gateway: null,
+            bot: null,
+            dye: null,
+            donaciones: null,
+            logistica: null,
+            incentivos: null,
+          },
+          lastCheck: {
+            gateway: null,
+            bot: null,
+            dye: null,
+            donaciones: null,
+            logistica: null,
+            incentivos: null,
+          },
+          serviceStatus: {},
+          urls: {},
+          inFlight: false,
+          timerId: null,
+          intervalMs: 10000,
+          autoRefresh: true,
+        };
+
+        const els = {
+          lastUpdate: document.getElementById("lastUpdate"),
+          globalDot: document.getElementById("globalDot"),
+          globalText: document.getElementById("globalText"),
+          refreshBtn: document.getElementById("refreshBtn"),
+          wakeAllBtn: document.getElementById("wakeAllBtn"),
+          autoToggle: document.getElementById("autoToggle"),
+          intervalSelect: document.getElementById("intervalSelect"),
+          edgeGrid: document.getElementById("edgeGrid"),
+          grid: document.getElementById("backendGrid"),
+          viewCards: document.getElementById("viewCards"),
+          viewArch: document.getElementById("viewArch"),
+          archDiagram: document.getElementById("archDiagram"),
+          statusTabs: document.querySelectorAll(".status-tab"),
+          cleanBtn: document.getElementById("cleanBtn"),
+          cleanResult: document.getElementById("cleanResult"),
+          tokenInput: document.getElementById("tokenInput"),
+          tokenSaveBtn: document.getElementById("tokenSaveBtn"),
+          tokenClearBtn: document.getElementById("tokenClearBtn"),
+          tokenStatus: document.getElementById("tokenStatus"),
+          confirmDialog: document.getElementById("confirmDialog"),
+        };
+
+        const TOKEN_KEY = "donatrack.adminSecret";
+        const CLEAN_TIMEOUT_MS = 90000;
+
+        const backendStatus = {
+          dye: "UNKNOWN",
+          donaciones: "UNKNOWN",
+          logistica: "UNKNOWN",
+          incentivos: "UNKNOWN",
+        };
+
+        function renderServiceCard(key, label, options) {
+          options = options || {};
+          const wakeBtn = options.wake
+            ? '  <div class="card-actions" id="actions-' +
+              key +
+              '" hidden>' +
+              '    <button class="btn warn sm" type="button" data-wake="' +
+              key +
+              '" aria-label="Despertar ' +
+              label +
+              '">' +
+              '      <span class="spinner" aria-hidden="true"></span>' +
+              '      <span>Despertar</span>' +
+              "    </button>" +
+              "  </div>" +
+              '  <div class="wake-status" id="wake-status-' +
+              key +
+              '"></div>'
+            : "";
+          const kicker = options.kicker
+            ? '      <span class="kicker">' + options.kicker + "</span>"
+            : "";
+          return (
+            '<article class="card" id="card-' +
+            key +
+            '">' +
+            '  <div class="card-head">' +
+            '    <div class="card-title">' +
+            kicker +
+            '      <span class="name">' +
+            label +
+            "</span>" +
+            '      <span class="url" id="url-' +
+            key +
+            '"></span>' +
+            "    </div>" +
+            '    <span class="badge" id="badge-' +
+            key +
+            '">LOADING</span>' +
+            "  </div>" +
+            '  <div class="meta">' +
+            "    <div>" +
+            '      <span class="label">Latencia</span>' +
+            '      <span class="value" id="latency-' +
+            key +
+            '">—</span>' +
+            "    </div>" +
+            "    <div>" +
+            '      <span class="label">Última verificación</span>' +
+            '      <span class="value" id="ts-' +
+            key +
+            '">—</span>' +
+            "    </div>" +
+            "  </div>" +
+            '  <div class="error-msg" id="error-' +
+            key +
+            '" style="display:none"></div>' +
+            wakeBtn +
+            '  <div class="history">' +
+            '    <div class="history-label">' +
+            "      <span>Historial reciente</span>" +
+            '      <span id="history-count-' +
+            key +
+            '">0 / ' +
+            HISTORY_LIMIT +
+            "</span>" +
+            "    </div>" +
+            '    <div class="history-bars" id="history-' +
+            key +
+            '" aria-hidden="true"></div>' +
+            "  </div>" +
+            "</article>"
+          );
+        }
+
+        function buildEdgeCards() {
+          if (!els.edgeGrid) return;
+          els.edgeGrid.innerHTML = EDGE.map(function (s) {
+            return renderServiceCard(s.key, s.label, { kicker: s.kicker });
+          }).join("");
+        }
+
+        function buildBackendCards() {
+          const html = BACKENDS.map(function (b) {
+            return renderServiceCard(b.key, b.label, { wake: true });
+          }).join("");
+          els.grid.innerHTML = html;
+        }
+
+        function formatTime(date) {
+          if (!date) return "—";
+          const pad = function (n) {
+            return String(n).padStart(2, "0");
+          };
+          return pad(date.getHours()) + ":" + pad(date.getMinutes()) + ":" + pad(date.getSeconds());
+        }
+
+        function setBadge(key, status) {
+          const badge = document.getElementById("badge-" + key);
+          const card = document.getElementById("card-" + key);
+          if (!badge || !card) return;
+          badge.classList.remove("up", "down", "warn");
+          card.classList.remove("up", "down", "warn", "loading");
+          const s = String(status || "").toUpperCase();
+          badge.textContent = s || "UNKNOWN";
+          if (s === "UP") {
+            badge.classList.add("up");
+            card.classList.add("up");
+          } else if (s === "DOWN") {
+            badge.classList.add("down");
+            card.classList.add("down");
+          } else if (s === "LOADING") {
+            card.classList.add("loading");
+          } else if (s === "UNKNOWN") {
+            // neutral
+          } else {
+            badge.classList.add("warn");
+            card.classList.add("warn");
+          }
+        }
+
+        function pushHistory(key, status) {
+          const arr = state.history[key];
+          if (!arr) return;
+          arr.push(status);
+          if (arr.length > HISTORY_LIMIT) arr.shift();
+          renderHistory(key);
+        }
+
+        function renderHistory(key) {
+          const container = document.getElementById("history-" + key);
+          const count = document.getElementById("history-count-" + key);
+          if (!container) return;
+          const arr = state.history[key];
+          const bars = [];
+          for (let i = 0; i < HISTORY_LIMIT; i++) {
+            const idx = arr.length - HISTORY_LIMIT + i;
+            const val = idx >= 0 ? arr[idx] : null;
+            let cls = "bar";
+            if (val === "UP") cls += " up";
+            else if (val === "DOWN") cls += " down";
+            bars.push('<span class="' + cls + '"></span>');
+          }
+          container.innerHTML = bars.join("");
+          if (count) count.textContent = arr.length + " / " + HISTORY_LIMIT;
+        }
+
+        function setLatency(key, ms) {
+          const el = document.getElementById("latency-" + key);
+          if (!el) return;
+          el.textContent = ms == null ? "—" : ms + " ms";
+        }
+
+        function setTs(key, date) {
+          const el = document.getElementById("ts-" + key);
+          if (!el) return;
+          el.textContent = formatTime(date);
+        }
+
+        function setUrl(key, url) {
+          const el = document.getElementById("url-" + key);
+          if (!el || !url) return;
+          el.textContent = url;
+        }
+
+        function setError(key, msg) {
+          const el = document.getElementById("error-" + key);
+          if (!el) return;
+          if (msg) {
+            el.textContent = msg;
+            el.style.display = "";
+          } else {
+            el.textContent = "";
+            el.style.display = "none";
+          }
+        }
+
+        function updateWakeVisibility() {
+          let anyDown = false;
+          BACKENDS.forEach(function (b) {
+            const st = backendStatus[b.key];
+            const needsWake = st === "DOWN" || st === "UNKNOWN";
+            const actions = document.getElementById("actions-" + b.key);
+            if (actions) actions.hidden = !needsWake;
+            if (needsWake) anyDown = true;
+          });
+          if (els.wakeAllBtn) els.wakeAllBtn.hidden = !anyDown;
+        }
+
+        function setWakeStatus(key, kind, msg) {
+          const el = document.getElementById("wake-status-" + key);
+          if (!el) return;
+          el.classList.remove("ok", "fail");
+          if (kind) el.classList.add(kind);
+          if (msg) {
+            el.textContent = msg;
+            el.style.display = "";
+          } else {
+            el.textContent = "";
+            el.style.display = "none";
+          }
+        }
+
+        function fetchPostWithTimeout(url, ms) {
+          const ctrl = new AbortController();
+          const timeoutId = setTimeout(function () {
+            ctrl.abort();
+          }, ms);
+          return fetch(url, { method: "POST", signal: ctrl.signal, cache: "no-store" }).finally(
+            function () {
+              clearTimeout(timeoutId);
+            }
+          );
+        }
+
+        async function wakeService(key) {
+          const btn = document.querySelector('[data-wake="' + key + '"]');
+          if (btn) {
+            btn.disabled = true;
+            btn.classList.add("loading");
+          }
+          setWakeStatus(key, null, "Despertando… (puede tardar hasta 90s en cold start)");
+          const started = performance.now();
+          try {
+            const res = await fetchPostWithTimeout("/admin/wake/" + key, WAKE_TIMEOUT_MS);
+            const elapsed = Math.round(performance.now() - started);
+            const data = await res.json().catch(function () {
+              return {};
+            });
+            const svc = (data && data.service) || {};
+            const outcome = svc.outcome || (res.ok ? "AWAKE" : "FAILED");
+            if (res.ok && outcome === "AWAKE") {
+              setWakeStatus(
+                key,
+                "ok",
+                "Servicio despierto en " + (svc.latencyMs != null ? svc.latencyMs : elapsed) + " ms · HTTP " + svc.httpStatus
+              );
+            } else {
+              setWakeStatus(
+                key,
+                "fail",
+                "No respondió (" + (svc.error || "HTTP " + (svc.httpStatus || res.status)) + ")"
+              );
+            }
+          } catch (err) {
+            setWakeStatus(key, "fail", "Timeout / error: " + (err && err.message ? err.message : err));
+          } finally {
+            if (btn) {
+              btn.disabled = false;
+              btn.classList.remove("loading");
+            }
+            pollOnce();
+          }
+        }
+
+        function getToken() {
+          try {
+            return sessionStorage.getItem(TOKEN_KEY) || "";
+          } catch (_) {
+            return "";
+          }
+        }
+
+        function setToken(value) {
+          try {
+            if (value) sessionStorage.setItem(TOKEN_KEY, value);
+            else sessionStorage.removeItem(TOKEN_KEY);
+          } catch (_) {
+            /* ignore */
+          }
+          renderTokenStatus();
+        }
+
+        function renderTokenStatus() {
+          const token = getToken();
+          if (token) {
+            const preview = token.length <= 8 ? "•".repeat(token.length) : "•".repeat(4) + "…" + token.slice(-2);
+            els.tokenStatus.textContent = "Guardado (" + preview + ")";
+            els.tokenStatus.classList.add("set");
+            els.tokenInput.value = "";
+            els.tokenInput.placeholder = "Reemplazar token…";
+            els.tokenClearBtn.hidden = false;
+          } else {
+            els.tokenStatus.textContent = "Sin token guardado";
+            els.tokenStatus.classList.remove("set");
+            els.tokenInput.placeholder = "ADMIN_SECRET";
+            els.tokenClearBtn.hidden = true;
+          }
+        }
+
+        function fetchAdminWithTimeout(url, method, ms) {
+          const ctrl = new AbortController();
+          const timeoutId = setTimeout(function () {
+            ctrl.abort();
+          }, ms);
+          const headers = {};
+          const token = getToken();
+          if (token) headers["Authorization"] = "Bearer " + token;
+          return fetch(url, {
+            method: method,
+            headers: headers,
+            signal: ctrl.signal,
+            cache: "no-store",
+          }).finally(function () {
+            clearTimeout(timeoutId);
+          });
+        }
+
+        function renderCleanResult(kind, title, services) {
+          const el = els.cleanResult;
+          el.classList.remove("ok", "partial", "fail");
+          if (kind) el.classList.add(kind);
+          const lines = ["<strong>" + escapeHtml(title) + "</strong>"];
+          if (services && typeof services === "object") {
+            lines.push("<ul>");
+            Object.keys(services).forEach(function (name) {
+              const svc = services[name] || {};
+              const outcome = svc.outcome || "?";
+              const status = svc.httpStatus != null ? " · HTTP " + svc.httpStatus : "";
+              const err = svc.error ? " · " + svc.error : "";
+              lines.push(
+                '<li><span class="service-name">' +
+                  escapeHtml(name) +
+                  "</span>: " +
+                  escapeHtml(outcome) +
+                  escapeHtml(status + err) +
+                  "</li>"
+              );
+            });
+            lines.push("</ul>");
+          }
+          el.innerHTML = lines.join("");
+          el.style.display = "";
+        }
+
+        function escapeHtml(str) {
+          return String(str == null ? "" : str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        async function performClean() {
+          const cleanButtons = document.querySelectorAll("#cleanBtn, .clean-card-btn");
+          cleanButtons.forEach(function (btn) {
+            btn.disabled = true;
+            btn.classList.add("loading");
+          });
+          renderCleanResult(null, "Borrando data en los 4 servicios…", null);
+          try {
+            const res = await fetchAdminWithTimeout("/admin/clean", "DELETE", CLEAN_TIMEOUT_MS);
+            const data = await res.json().catch(function () {
+              return null;
+            });
+            if (res.status === 401) {
+              renderCleanResult(
+                "fail",
+                "No autorizado (401). Verificá el token administrativo.",
+                null
+              );
+              setToken("");
+              return;
+            }
+            if (!data) {
+              renderCleanResult("fail", "Respuesta inválida del gateway (HTTP " + res.status + ")", null);
+              return;
+            }
+            const kind = data.status === "OK" ? "ok" : data.status === "PARTIAL" ? "partial" : "fail";
+            const title =
+              data.status === "OK"
+                ? "Data borrada en los 4 servicios."
+                : data.status === "PARTIAL"
+                ? "Borrado parcial — revisá los fallos abajo."
+                : "Falló el borrado (" + data.status + ")";
+            renderCleanResult(kind, title, data.services);
+            pollOnce();
+          } catch (err) {
+            renderCleanResult(
+              "fail",
+              "Error de red: " + (err && err.message ? err.message : String(err)),
+              null
+            );
+          } finally {
+            cleanButtons.forEach(function (btn) {
+              btn.disabled = false;
+              btn.classList.remove("loading");
+            });
+          }
+        }
+
+        function openConfirmClean() {
+          if (typeof els.confirmDialog.showModal === "function") {
+            els.confirmDialog.showModal();
+          } else {
+            if (window.confirm("¿Borrar toda la data de los 4 servicios? Esta acción es irreversible.")) {
+              performClean();
+            }
+          }
+        }
+
+        async function wakeAll() {
+          if (!els.wakeAllBtn) return;
+          els.wakeAllBtn.disabled = true;
+          els.wakeAllBtn.classList.add("loading");
+          BACKENDS.forEach(function (b) {
+            if (backendStatus[b.key] === "DOWN" || backendStatus[b.key] === "UNKNOWN") {
+              setWakeStatus(b.key, null, "Despertando…");
+            }
+          });
+          try {
+            const res = await fetchPostWithTimeout("/admin/wake", WAKE_TIMEOUT_MS);
+            const data = await res.json().catch(function () {
+              return {};
+            });
+            const services = (data && data.services) || {};
+            BACKENDS.forEach(function (b) {
+              const svc = services[b.key];
+              if (!svc) return;
+              if (svc.outcome === "AWAKE") {
+                setWakeStatus(b.key, "ok", "Despierto en " + svc.latencyMs + " ms");
+              } else {
+                setWakeStatus(
+                  b.key,
+                  "fail",
+                  "Falló (" + (svc.error || "HTTP " + svc.httpStatus) + ")"
+                );
+              }
+            });
+          } catch (err) {
+            BACKENDS.forEach(function (b) {
+              if (backendStatus[b.key] !== "UP") {
+                setWakeStatus(b.key, "fail", "Timeout: " + (err && err.message ? err.message : err));
+              }
+            });
+          } finally {
+            els.wakeAllBtn.disabled = false;
+            els.wakeAllBtn.classList.remove("loading");
+            pollOnce();
+          }
+        }
+
+        function setGlobal(summary) {
+          els.globalDot.classList.remove("up", "down", "warn");
+          if (summary.kind === "UP") {
+            els.globalDot.classList.add("up");
+            els.globalText.textContent = "Todos los servicios están operativos";
+          } else if (summary.kind === "GW_DOWN") {
+            els.globalDot.classList.add("warn");
+            els.globalText.textContent = summary.text;
+          } else if (summary.kind === "DEGRADED") {
+            els.globalDot.classList.add("warn");
+            els.globalText.textContent = summary.text;
+          } else if (summary.kind === "DOWN") {
+            els.globalDot.classList.add("down");
+            els.globalText.textContent = summary.text;
+          } else {
+            els.globalText.textContent = "Cargando…";
+          }
+        }
+
+        function computeGlobalSummary() {
+          const up = ALL_KEYS.filter(function (k) {
+            return state.serviceStatus[k] === "UP";
+          }).length;
+          const down = ALL_KEYS.filter(function (k) {
+            return state.serviceStatus[k] === "DOWN";
+          }).length;
+
+          if (up === ALL_KEYS.length) {
+            return { kind: "UP" };
+          }
+          if (state.serviceStatus.gateway === "DOWN") {
+            return {
+              kind: "GW_DOWN",
+              text:
+                "Gateway caído · " +
+                up +
+                " de " +
+                ALL_KEYS.length +
+                " servicios responden (chequeo independiente)",
+            };
+          }
+          if (down > 0) {
+            return {
+              kind: "DEGRADED",
+              text: "Sistema degradado — " + down + " servicio(s) caído(s)",
+            };
+          }
+          return { kind: "LOADING" };
+        }
+
+        function healthUrlDirect(key) {
+          if (key === "gateway") return "/actuator/health";
+          if (key === "bot") return "/admin/bot-health";
+          const base = state.urls[key] || DEFAULT_URLS[key];
+          if (!base) return null;
+          return base.replace(/\/+$/, "") + "/actuator/health";
+        }
+
+        function healthUrlViaGateway(key) {
+          if (key === "gateway" || key === "bot") return null;
+          return "/api/" + key + "/actuator/health";
+        }
+
+        async function probeService(key) {
+          const started = performance.now();
+          const direct = healthUrlDirect(key);
+          let status = "DOWN";
+          let error = null;
+          let via = "direct";
+
+          async function attempt(url) {
+            const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            if (key === "bot") {
+              const data = await res.json().catch(function () {
+                return null;
+              });
+              if (!data || String(data.status || "").toUpperCase() !== "UP") {
+                throw new Error((data && data.error) || "bot /health no UP");
+              }
+            }
+          }
+
+          try {
+            if (!direct) throw new Error("Sin URL configurada");
+            await attempt(direct);
+            status = "UP";
+          } catch (e1) {
+            const fallback = healthUrlViaGateway(key);
+            if (fallback) {
+              try {
+                await attempt(fallback);
+                status = "UP";
+                via = "gateway";
+              } catch (e2) {
+                error = e2 && e2.message ? e2.message : String(e2);
+              }
+            } else {
+              error = e1 && e1.message ? e1.message : String(e1);
+            }
+          }
+
+          return {
+            key: key,
+            status: status,
+            ms: Math.round(performance.now() - started),
+            error: error,
+            via: via,
+          };
+        }
+
+        function applyProbeResult(result, ts) {
+          state.serviceStatus[result.key] = result.status;
+          setBadge(result.key, result.status);
+          setLatency(result.key, result.status === "UP" ? result.ms : null);
+          setTs(result.key, ts);
+          state.lastCheck[result.key] = ts;
+          pushHistory(
+            result.key,
+            result.status === "UP" || result.status === "DOWN" ? result.status : null
+          );
+
+          if (result.status === "DOWN") {
+            let msg = result.error || "Sin detalle";
+            if (result.via === "gateway" && result.key !== "gateway") {
+              msg = result.error || "Falló directo y vía gateway";
+            }
+            setError(result.key, msg);
+          } else {
+            setError(result.key, null);
+          }
+
+          if (backendStatus[result.key] !== undefined) {
+            backendStatus[result.key] = result.status;
+          }
+        }
+
+        function archFill(status) {
+          if (status === "UP") return { fill: "#14532d", stroke: "#22c55e" };
+          if (status === "DOWN") return { fill: "#7f1d1d", stroke: "#ef4444" };
+          return { fill: "#78350f", stroke: "#f59e0b" };
+        }
+
+        function archLinkColor(fromStatus, toStatus) {
+          if (fromStatus === "DOWN" || toStatus === "DOWN") return "#ef4444";
+          if (fromStatus === "UNKNOWN" || toStatus === "UNKNOWN") return "#f59e0b";
+          if (fromStatus === "UP" && toStatus === "UP") return "#22c55e";
+          return "#f59e0b";
+        }
+
+        function svgEsc(str) {
+          return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function renderArchDiagram() {
+          if (!els.archDiagram) return;
+          const s = state.serviceStatus;
+          const st = {
+            gateway: s.gateway || "UNKNOWN",
+            bot: s.bot || "UNKNOWN",
+            dye: s.dye || "UNKNOWN",
+            donaciones: s.donaciones || "UNKNOWN",
+            logistica: s.logistica || "UNKNOWN",
+            incentivos: s.incentivos || "UNKNOWN",
+          };
+
+          const box = function (id, x, y, w, h, label, status) {
+            const c = archFill(status);
+            return (
+              '<g id="' +
+              id +
+              '">' +
+              '<rect x="' +
+              x +
+              '" y="' +
+              y +
+              '" width="' +
+              w +
+              '" height="' +
+              h +
+              '" rx="8" fill="' +
+              c.fill +
+              '" stroke="' +
+              c.stroke +
+              '" stroke-width="1.6"/>' +
+              '<text x="' +
+              (x + w / 2) +
+              '" y="' +
+              (y + h / 2 + 4) +
+              '" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="600">' +
+              svgEsc(label) +
+              "</text></g>"
+            );
+          };
+
+          const marker = function (id, color) {
+            return (
+              '<marker id="' +
+              id +
+              '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+              '<path d="M 0 0 L 10 5 L 0 10 z" fill="' +
+              color +
+              '"/></marker>'
+            );
+          };
+
+          const arrow = function (x1, y1, x2, y2, color, mid) {
+            const d = mid
+              ? "M" + x1 + " " + y1 + " C" + mid.x + " " + y1 + "," + mid.x + " " + y2 + "," + x2 + " " + y2
+              : "M" + x1 + " " + y1 + " L" + x2 + " " + y2;
+            return (
+              '<path d="' +
+              d +
+              '" fill="none" stroke="' +
+              color +
+              '" stroke-width="2" marker-end="url(#arr-' +
+              color.replace("#", "") +
+              ')"/>'
+            );
+          };
+
+          const userX = 46;
+          const userY = 118;
+          const bot = { x: 168, y: 28, w: 128, h: 36 };
+          const gw = { x: 168, y: 128, w: 128, h: 36 };
+          const mods = [
+            { key: "dye", label: "DyE", y: 44 },
+            { key: "donaciones", label: "Donaciones", y: 94 },
+            { key: "logistica", label: "Logística", y: 144 },
+            { key: "incentivos", label: "Incentivos", y: 194 },
+          ];
+          const modX = 430;
+          const modW = 128;
+          const modH = 36;
+          const cBot = archLinkColor("UP", st.bot);
+          const cUserGw = archLinkColor("UP", st.gateway);
+          const cBotGw = archLinkColor(st.bot, st.gateway);
+
+          const colors = {};
+          [cBot, cUserGw, cBotGw]
+            .concat(
+              mods.map(function (m) {
+                return archLinkColor(st.gateway, st[m.key]);
+              })
+            )
+            .forEach(function (col) {
+              colors[col] = true;
+            });
+
+          let markers = "";
+          Object.keys(colors).forEach(function (col) {
+            markers += marker("arr-" + col.replace("#", ""), col);
+          });
+
+          let moduleBoxes = "";
+          let moduleArrows = "";
+          mods.forEach(function (m) {
+            const cy = m.y + modH / 2;
+            moduleBoxes += box("n-" + m.key, modX, m.y, modW, modH, m.label, st[m.key]);
+            moduleArrows += arrow(
+              gw.x + gw.w,
+              gw.y + gw.h / 2,
+              modX,
+              cy,
+              archLinkColor(st.gateway, st[m.key]),
+              { x: 340 }
+            );
+          });
+
+          els.archDiagram.innerHTML =
+            '<svg viewBox="0 0 600 250" role="img" aria-label="Arquitectura DonaTrack">' +
+            "<defs>" +
+            markers +
+            "</defs>" +
+            '<rect x="402" y="12" width="174" height="226" rx="12" fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="6 4"/>' +
+            '<text x="489" y="28" text-anchor="middle" fill="#9aa5bd" font-size="10" font-weight="700" letter-spacing="0.08em">MÓDULOS</text>' +
+            '<g id="n-user" transform="translate(' +
+            userX +
+            " " +
+            userY +
+            ')">' +
+            '<circle cx="0" cy="-18" r="9" fill="#c5d0e6"/>' +
+            '<path d="M-14 0 C-14 -10 14 -10 14 0 L14 18 C14 24 8 28 0 28 C-8 28 -14 24 -14 18 Z" fill="#c5d0e6"/>' +
+            '<text x="0" y="46" text-anchor="middle" fill="#9aa5bd" font-size="11" font-weight="600">Usuario</text>' +
+            "</g>" +
+            box("n-bot", bot.x, bot.y, bot.w, bot.h, "Bot Telegram", st.bot) +
+            box("n-gw", gw.x, gw.y, gw.w, gw.h, "API Gateway", st.gateway) +
+            moduleBoxes +
+            arrow(userX + 18, userY - 18, bot.x, bot.y + bot.h / 2, cBot, { x: 110 }) +
+            arrow(userX + 16, userY + 4, gw.x, gw.y + gw.h / 2, cUserGw) +
+            arrow(bot.x + bot.w / 2, bot.y + bot.h, gw.x + gw.w / 2, gw.y, cBotGw) +
+            moduleArrows +
+            "</svg>";
+        }
+
+        function wireTabs() {
+          els.statusTabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+              const view = tab.getAttribute("data-status-view");
+              els.statusTabs.forEach(function (t) {
+                const active = t === tab;
+                t.classList.toggle("active", active);
+                t.setAttribute("aria-selected", active ? "true" : "false");
+              });
+              els.viewCards.hidden = view !== "cards";
+              els.viewArch.hidden = view !== "arch";
+              if (view === "arch") renderArchDiagram();
+            });
+          });
+        }
+
+        function fetchWithTimeout(url, ms) {
+          const ctrl = new AbortController();
+          const timeoutId = setTimeout(function () {
+            ctrl.abort();
+          }, ms);
+          return fetch(url, { signal: ctrl.signal, cache: "no-store" }).finally(function () {
+            clearTimeout(timeoutId);
+          });
+        }
+
+        async function fetchRoutesOnce() {
+          try {
+            const res = await fetchWithTimeout("/", 10000);
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && data.routes) {
+              Object.keys(data.routes).forEach(function (k) {
+                const target = data.routes[k] && data.routes[k].target;
+                if (target) {
+                  state.urls[k] = target;
+                  setUrl(k, target);
+                }
+              });
+            }
+          } catch (e) {
+            /* silencioso */
+          }
+          setUrl("gateway", window.location.origin);
+          setUrl("bot", DEFAULT_URLS.bot);
+          ALL_KEYS.forEach(function (k) {
+            if (!document.getElementById("url-" + k)) return;
+            if (k === "gateway" || k === "bot") return;
+            if (!state.urls[k] && DEFAULT_URLS[k]) setUrl(k, DEFAULT_URLS[k]);
+          });
+        }
+
+        async function pollOnce() {
+          if (state.inFlight) return;
+          state.inFlight = true;
+          els.refreshBtn.disabled = true;
+          els.refreshBtn.classList.add("loading");
+
+          ALL_KEYS.forEach(function (k) {
+            setBadge(k, "LOADING");
+          });
+
+          const results = await Promise.all(
+            ALL_KEYS.map(function (k) {
+              return probeService(k);
+            })
+          );
+
+          const ts = new Date();
+          els.lastUpdate.textContent = formatTime(ts);
+          results.forEach(function (r) {
+            applyProbeResult(r, ts);
+          });
+
+          setGlobal(computeGlobalSummary());
+          updateWakeVisibility();
+          if (!els.viewArch.hidden) renderArchDiagram();
+
+          state.inFlight = false;
+          els.refreshBtn.disabled = false;
+          els.refreshBtn.classList.remove("loading");
+        }
+
+        function scheduleNext() {
+          if (state.timerId) {
+            clearTimeout(state.timerId);
+            state.timerId = null;
+          }
+          if (!state.autoRefresh) return;
+          state.timerId = setTimeout(async function loop() {
+            await pollOnce();
+            if (state.autoRefresh) {
+              state.timerId = setTimeout(loop, state.intervalMs);
+            }
+          }, state.intervalMs);
+        }
+
+        function wireEvents() {
+          els.refreshBtn.addEventListener("click", function () {
+            pollOnce().then(scheduleNext);
+          });
+          els.autoToggle.addEventListener("change", function () {
+            state.autoRefresh = els.autoToggle.checked;
+            scheduleNext();
+          });
+          els.intervalSelect.addEventListener("change", function () {
+            state.intervalMs = parseInt(els.intervalSelect.value, 10) || 10000;
+            scheduleNext();
+          });
+          document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === "visible" && state.autoRefresh) {
+              pollOnce().then(scheduleNext);
+            }
+          });
+          if (els.wakeAllBtn) {
+            els.wakeAllBtn.addEventListener("click", function () {
+              wakeAll();
+            });
+          }
+          els.grid.addEventListener("click", function (event) {
+            const btn = event.target && event.target.closest && event.target.closest("[data-wake]");
+            if (!btn) return;
+            const key = btn.getAttribute("data-wake");
+            if (key) wakeService(key);
+          });
+          if (els.edgeGrid) {
+            els.edgeGrid.addEventListener("click", function (event) {
+              const btn = event.target && event.target.closest && event.target.closest("[data-wake]");
+              if (!btn) return;
+              const key = btn.getAttribute("data-wake");
+              if (key) wakeService(key);
+            });
+          }
+          els.tokenSaveBtn.addEventListener("click", function () {
+            const value = (els.tokenInput.value || "").trim();
+            if (!value) return;
+            setToken(value);
+          });
+          els.tokenInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              els.tokenSaveBtn.click();
+            }
+          });
+          els.tokenClearBtn.addEventListener("click", function () {
+            setToken("");
+          });
+          els.cleanBtn.addEventListener("click", function () {
+            openConfirmClean();
+          });
+          els.confirmDialog.addEventListener("close", function () {
+            if (els.confirmDialog.returnValue === "ok") {
+              performClean();
+            }
+          });
+        }
+
+        async function init() {
+          buildEdgeCards();
+          buildBackendCards();
+          ALL_KEYS.forEach(function (k) {
+            renderHistory(k);
+          });
+          renderTokenStatus();
+          wireTabs();
+          wireEvents();
+          await fetchRoutesOnce();
+          await pollOnce();
+          scheduleNext();
+        }
+
+        window.__dashboardApi = {
+          pollNow: pollOnce,
+          openConfirmClean: openConfirmClean,
+        };
+
+        init();
+      })();
+    </script>
+
+    <script type="module">
+      import { createClient, HttpError } from "/seeds/client.js";
+      import { loadAllSeeds } from "/seeds/registry.js";
+
+      const RESULTS_KEY_PREFIX = "donatrack.seedResults.";
+      const CHECKED_KEY_PREFIX = "donatrack.e4.checked.";
+      const modulesRoot = document.getElementById("e4Modules");
+      const timelineRoot = document.getElementById("e4Timeline");
+      const timelineProgress = document.getElementById("e4TimelineProgress");
+      const client = createClient(window.location.origin);
+      const runningIds = new Set();
+      const TELEGRAM_BOT_URL = "https://web.telegram.org/k/#@deudatecnicafcbot";
+
+      let flatRequirements = [];
+      let timelineObserver = null;
+
+      const MODULE_TIMELINE_LABEL = {
+        "logistica-a": "Stock",
+        "logistica-b": "Async",
+        dye: "DyE",
+        incentivos: "Incentivos",
+        bot: "Bot",
+      };
+
+      function resolveInteraction(req, mod, seed) {
+        if (req.interaction) return req.interaction;
+        if (mod && mod.interaction) return mod.interaction;
+        if (seed && seed.meta && seed.meta.manualOnly) return "manual";
+        if (seed && seed.run) return "auto";
+        return "manual";
+      }
+
+      function cleanBtnHtml() {
+        return (
+          '<button class="btn danger clean-card-btn" type="button" title="Borrar toda la data de los 4 servicios">' +
+          '<span class="spinner" aria-hidden="true"></span>' +
+          "<span>Borrar data</span>" +
+          "</button>"
+        );
+      }
+
+      function wireCleanButton(card) {
+        const cleanBtn = card.querySelector(".clean-card-btn");
+        if (!cleanBtn) return;
+        cleanBtn.addEventListener("click", function () {
+          if (window.__dashboardApi && window.__dashboardApi.openConfirmClean) {
+            window.__dashboardApi.openConfirmClean();
+          }
+        });
+      }
+
+      function actionsHtml(interaction) {
+        const clean = cleanBtnHtml();
+        if (interaction === "bot") {
+          return (
+            '  <div class="seed-action-buttons">' +
+            clean +
+            '  <a class="btn primary action-link" href="' +
+            escapeHtml(TELEGRAM_BOT_URL) +
+            '" target="_blank" rel="noopener noreferrer">' +
+            "    <span>Abrir bot en Telegram</span>" +
+            '    <span aria-hidden="true">↗</span>' +
+            "  </a>" +
+            "  </div>" +
+            '  <span class="manual-hint">Probá en Telegram y marcá <strong>Probado</strong> cuando termines.</span>'
+          );
+        }
+        if (interaction === "auto") {
+          return (
+            '  <div class="seed-action-buttons">' +
+            clean +
+            '  <button class="btn primary run-btn" type="button">' +
+            '    <span class="spinner" aria-hidden="true"></span>' +
+            "    <span>▶ Preparar escenario</span>" +
+            "  </button>" +
+            '  <button class="btn ghost view-btn" type="button" hidden>Ver resultado JSON</button>' +
+            "  </div>"
+          );
+        }
+        return (
+          '  <div class="seed-action-buttons">' +
+          clean +
+          "  </div>" +
+          '  <span class="manual-hint">Sin preparación automática — seguí el paso a paso en vivo con el profesor.</span>'
+        );
+      }
+
+      function reqKindHtml(req) {
+        if (req.required !== false) {
+          return '<span class="req-kind required" title="Pide el enunciado de la Entrega 4">★ Requerido</span>';
+        }
+        return '<span class="req-kind optional" title="Apoyo para la demo; no es un ítem aparte del enunciado">Apoyo demo</span>';
+      }
+
+      function escapeHtml(str) {
+        return String(str == null ? "" : str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function tagsHtml(tags) {
+        if (!tags || !tags.length) return "";
+        return (
+          '<div class="seed-tags">' +
+          tags.map((t) => '<span class="tag">' + escapeHtml(t) + "</span>").join("") +
+          "</div>"
+        );
+      }
+
+      function guideSection(title, bodyHtml, open) {
+        if (!bodyHtml) return "";
+        return (
+          '<details class="seed-guide-item"' + (open ? " open" : "") + ">" +
+          '  <summary class="seed-guide-summary">' + escapeHtml(title) + "</summary>" +
+          '  <div class="seed-guide-panel">' + bodyHtml + "</div>" +
+          "</details>"
+        );
+      }
+
+      function guideTextHtml(value) {
+        if (!value) return "";
+        if (Array.isArray(value)) {
+          return (
+            '<ul class="seed-guide-list">' +
+            value.map((item) => "<li>" + escapeHtml(item) + "</li>").join("") +
+            "</ul>"
+          );
+        }
+        return '<p class="seed-guide-body">' + escapeHtml(value) + "</p>";
+      }
+
+      function guideHtml(guide) {
+        if (!guide) return "";
+        const items = [
+          { title: "Paso a paso", body: guideTextHtml(guide.steps || guide.how || guide.method) },
+          {
+            title: "Resultado esperado",
+            body: guideTextHtml(guide.expected),
+          },
+        ].filter((item) => item.body);
+        if (!items.length) return "";
+        return (
+          '<div class="seed-guide">' +
+          items
+            .map((item, index) => guideSection(item.title, item.body, index === 0))
+            .join("") +
+          "</div>"
+        );
+      }
+
+      function isChecked(id) {
+        try {
+          return localStorage.getItem(CHECKED_KEY_PREFIX + id) === "1";
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function setChecked(id, value) {
+        try {
+          if (value) localStorage.setItem(CHECKED_KEY_PREFIX + id, "1");
+          else localStorage.removeItem(CHECKED_KEY_PREFIX + id);
+        } catch (_) {
+          /* ignore */
+        }
+        syncCheckedUi(id);
+        updateTimelineProgress();
+      }
+
+      function syncCheckedUi(id) {
+        const card = document.getElementById("req-" + id);
+        const dot = document.querySelector('.e4-timeline-item[data-req-id="' + id + '"]');
+        const on = isChecked(id);
+        if (card) card.classList.toggle("checked", on);
+        if (dot) dot.classList.toggle("checked", on);
+      }
+
+      function updateTimelineProgress() {
+        if (!timelineProgress || !flatRequirements.length) return;
+        const done = flatRequirements.filter((r) => isChecked(r.id)).length;
+        const reqTotal = flatRequirements.filter((r) => r.required !== false).length;
+        const reqDone = flatRequirements.filter((r) => r.required !== false && isChecked(r.id)).length;
+        timelineProgress.innerHTML =
+          "<strong>" +
+          reqDone +
+          "</strong> / " +
+          reqTotal +
+          " requeridos" +
+          '<span class="sub">' +
+          done +
+          " / " +
+          flatRequirements.length +
+          " total probados</span>";
+      }
+
+      function renderTimeline(modules) {
+        if (!timelineRoot) return;
+        timelineRoot.innerHTML = "";
+        flatRequirements = [];
+        for (const mod of modules) {
+          const modLabel = document.createElement("div");
+          modLabel.className = "e4-timeline-module";
+          modLabel.textContent = MODULE_TIMELINE_LABEL[mod.id] || mod.title;
+          timelineRoot.appendChild(modLabel);
+          for (const req of mod.requirements) {
+            flatRequirements.push({
+              id: req.id,
+              required: req.required !== false,
+              shortTitle: req.shortTitle || req.requirement,
+            });
+            const btn = document.createElement("button");
+            btn.type = "button";
+            const classes = ["e4-timeline-item"];
+            if (req.required !== false) classes.push("is-required");
+            if (isChecked(req.id)) classes.push("checked");
+            btn.className = classes.join(" ");
+            btn.dataset.reqId = req.id;
+            btn.title = req.requirement;
+            btn.innerHTML =
+              '<span class="tl-star" aria-hidden="true">★</span>' +
+              '<span class="tl-label">' +
+              escapeHtml(req.shortTitle || req.requirement) +
+              "</span>";
+            btn.addEventListener("click", () => {
+              const el = document.getElementById("req-" + req.id);
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            timelineRoot.appendChild(btn);
+          }
+        }
+        updateTimelineProgress();
+        setupTimelineObserver();
+      }
+
+      function setupTimelineObserver() {
+        if (timelineObserver) timelineObserver.disconnect();
+        if (!("IntersectionObserver" in window)) return;
+        timelineObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const id = entry.target.dataset.reqId;
+              const dot = document.querySelector('.e4-timeline-item[data-req-id="' + id + '"]');
+              if (dot) dot.classList.toggle("active", entry.isIntersecting);
+            });
+          },
+          { root: null, rootMargin: "-20% 0px -60% 0px", threshold: 0 }
+        );
+        document.querySelectorAll(".seed-card[data-req-id]").forEach((card) => {
+          timelineObserver.observe(card);
+        });
+      }
+
+      function renderReqCard(req, seed, mod) {
+        const interaction = resolveInteraction(req, mod, seed);
+        const hasAutoSeed = interaction === "auto" && Boolean(seed && seed.run);
+        const card = document.createElement("article");
+        card.className = "seed-card interaction-" + interaction + (isChecked(req.id) ? " checked" : "");
+        card.id = "req-" + req.id;
+        card.dataset.reqId = req.id;
+
+        const seedMeta = hasAutoSeed ? seed.meta : null;
+        const totalSteps = seedMeta ? seedMeta.totalSteps : 0;
+        const checkId = "check-" + req.id;
+
+        card.innerHTML =
+          '<div class="seed-head-row">' +
+          '  <div class="req-check-wrap">' +
+          '    <input type="checkbox" class="req-check" id="' + escapeHtml(checkId) + '"' +
+          (isChecked(req.id) ? " checked" : "") +
+          ' aria-label="Marcar como probado" />' +
+          '    <label class="req-check-label" for="' + escapeHtml(checkId) + '">Probado</label>' +
+          "  </div>" +
+          '  <div class="req-title-wrap">' +
+          reqKindHtml(req) +
+          '    <p class="req-title">' + escapeHtml(req.requirement) + "</p>" +
+          "  </div>" +
+          "</div>" +
+          guideHtml(req.guide) +
+          '<div class="seed-automation">' +
+          '  <div class="seed-progress">' +
+          '    <div class="seed-progress-label">' +
+          '      <span class="step-label">Listo</span>' +
+          '      <span class="step-count">0 / ' + escapeHtml(totalSteps) + "</span>" +
+          "    </div>" +
+          '    <div class="seed-progress-bar"><div class="seed-progress-fill"></div></div>' +
+          "  </div>" +
+          '  <div class="seed-log" role="log" aria-live="polite"></div>' +
+          "</div>" +
+          '<div class="seed-actions">' +
+          actionsHtml(interaction) +
+          '  <span class="status-text"></span>' +
+          "</div>";
+
+        const checkbox = card.querySelector(".req-check");
+        checkbox.addEventListener("change", () => setChecked(req.id, checkbox.checked));
+
+        wireCleanButton(card);
+
+        if (hasAutoSeed) {
+          card.querySelector(".run-btn").addEventListener("click", () => runSeed(seed, card));
+          card.querySelector(".view-btn").addEventListener("click", () => viewResult(req.id));
+        }
+        return card;
+      }
+
+      function renderModuleSection(mod, seedsById) {
+        const section = document.createElement("section");
+        section.className = "e4-module";
+        section.id = "e4-mod-" + mod.id;
+
+        const head = document.createElement("div");
+        head.className = "e4-module-head";
+        head.innerHTML =
+          "<h3>" +
+          escapeHtml(mod.title) +
+          '</h3><span class="count">' +
+          mod.requirements.length +
+          " punto" +
+          (mod.requirements.length === 1 ? "" : "s") +
+          "</span>";
+        section.appendChild(head);
+
+        const grid = document.createElement("div");
+        grid.className = "seeds-grid";
+        for (const req of mod.requirements) {
+          grid.appendChild(renderReqCard(req, seedsById[req.id], mod));
+        }
+        section.appendChild(grid);
+        return section;
+      }
+
+      function setSeedState(card, state) {
+        card.classList.remove("running", "done", "failed");
+        if (state) card.classList.add(state);
+      }
+
+      function updateProgress(card, current, total, label) {
+        const fill = card.querySelector(".seed-progress-fill");
+        const count = card.querySelector(".step-count");
+        const stepLabel = card.querySelector(".step-label");
+        const pct = total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0;
+        fill.style.width = pct + "%";
+        count.textContent = current + " / " + total;
+        if (label) stepLabel.textContent = label;
+      }
+
+      function appendLog(card, kind, msg) {
+        const container = card.querySelector(".seed-log");
+        const line = document.createElement("span");
+        line.className = "line " + (kind || "info");
+        const stamp = new Date().toLocaleTimeString();
+        line.textContent = "[" + stamp + "] " + msg;
+        container.appendChild(line);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function setStatusText(card, text) {
+        card.querySelector(".status-text").textContent = text || "";
+      }
+
+      function saveResult(id, result) {
+        try {
+          sessionStorage.setItem(RESULTS_KEY_PREFIX + id, JSON.stringify(result));
+        } catch (_) {
+          /* ignore quota */
+        }
+      }
+
+      function loadResult(id) {
+        try {
+          const raw = sessionStorage.getItem(RESULTS_KEY_PREFIX + id);
+          return raw ? JSON.parse(raw) : null;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function viewResult(id) {
+        const result = loadResult(id);
+        if (!result) {
+          alert("No hay resultado guardado para el escenario " + id);
+          return;
+        }
+        const w = window.open("", "_blank", "width=760,height=640");
+        if (!w) {
+          alert(JSON.stringify(result, null, 2));
+          return;
+        }
+        w.document.write(
+          '<!doctype html><html><head><title>Resultado seed ' + escapeHtml(id) + '</title>' +
+          '<meta charset="utf-8"/>' +
+          '<style>body{background:#0b0f17;color:#e6edf7;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:24px;margin:0}h1{font-size:14px;color:#9aa5bd;margin:0 0 12px}pre{white-space:pre-wrap;word-break:break-all;font-size:12.5px;line-height:1.5}</style>' +
+          '</head><body><h1>Escenario ' + escapeHtml(id) + ' — resultado</h1><pre>' +
+          escapeHtml(JSON.stringify(result, null, 2)) + '</pre></body></html>'
+        );
+        w.document.close();
+      }
+
+      async function runSeed(seed, card) {
+        if (runningIds.has(seed.id)) return;
+        runningIds.add(seed.id);
+
+        const runBtn = card.querySelector(".run-btn");
+        const viewBtn = card.querySelector(".view-btn");
+        const meta = seed.meta;
+        runBtn.disabled = true;
+        runBtn.classList.add("loading");
+        viewBtn.hidden = true;
+        card.querySelector(".seed-log").innerHTML = "";
+        setStatusText(card, "");
+        setSeedState(card, "running");
+        card.classList.add("has-log");
+        updateProgress(card, 0, meta.totalSteps, "Iniciando…");
+
+        const startedAt = performance.now();
+        const ctx = {
+          client,
+          log: (kind, msg) => appendLog(card, kind, msg),
+          progress: (current, total, label) => updateProgress(card, current, total, label),
+          saveResult: (result) => saveResult(seed.id, result),
+          loadResult,
+        };
+
+        try {
+          appendLog(card, "info", "Preparando " + seed.id + " · " + (meta.title || seed.id));
+          const result = await seed.run(ctx);
+          const elapsed = Math.round(performance.now() - startedAt);
+          updateProgress(card, meta.totalSteps, meta.totalSteps, "Completado ✅");
+          setSeedState(card, "done");
+          setStatusText(card, "OK · " + (elapsed / 1000).toFixed(1) + "s");
+          viewBtn.hidden = false;
+          appendLog(card, "ok", "✔ Terminado en " + elapsed + " ms");
+          if (window.__dashboardApi && window.__dashboardApi.pollNow) {
+            window.__dashboardApi.pollNow();
+          }
+        } catch (err) {
+          setSeedState(card, "failed");
+          setStatusText(card, "FALLÓ");
+          const msg = err instanceof HttpError
+            ? "HTTP " + err.status + " · " + err.url + " · " + (typeof err.body === "string" ? err.body : JSON.stringify(err.body)).slice(0, 400)
+            : (err && err.message ? err.message : String(err));
+          appendLog(card, "error", "✖ " + msg);
+          console.error("Seed " + seed.id + " falló:", err);
+        } finally {
+          runBtn.disabled = false;
+          runBtn.classList.remove("loading");
+          runningIds.delete(seed.id);
+        }
+      }
+
+      async function init() {
+        try {
+          const catalog = await import("/seeds/e4-catalog.js?v=" + Date.now());
+          const E4_MODULES = catalog.E4_MODULES;
+          const { byId: seedsById } = await loadAllSeeds();
+          modulesRoot.innerHTML = "";
+          if (!E4_MODULES.length) {
+            modulesRoot.innerHTML =
+              '<article class="seed-card"><div class="seed-head"><div class="seed-title">' +
+              '<span class="name">Sin requisitos de la Entrega 4 cargados</span>' +
+              "</div></div></article>";
+            return;
+          }
+          for (const mod of E4_MODULES) {
+            modulesRoot.appendChild(renderModuleSection(mod, seedsById));
+          }
+          renderTimeline(E4_MODULES);
+          for (const reqId of Object.keys(seedsById)) {
+            const card = document.getElementById("req-" + reqId);
+            if (!card || !card.classList.contains("interaction-auto")) continue;
+            if (loadResult(reqId)) {
+              card.classList.add("has-log");
+              const viewBtn = card.querySelector(".view-btn");
+              if (viewBtn) viewBtn.hidden = false;
+              const status = card.querySelector(".status-text");
+              if (status) status.textContent = "Escenario preparado";
+            }
+          }
+        } catch (err) {
+          modulesRoot.innerHTML =
+            '<article class="seed-card failed"><div class="seed-head"><div class="seed-title">' +
+            '<span class="name">Error al cargar requisitos de la Entrega 4</span>' +
+            '<span class="kicker" style="margin-top:4px">' + escapeHtml(err && err.message ? err.message : String(err)) + "</span>" +
+            "</div></div></article>";
+          console.error(err);
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

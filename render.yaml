@@ -22,6 +22,6 @@ services:
       - key: RATE_LIMIT_ENABLED
         value: "true"
       - key: RATE_LIMIT_RPM
-        value: "120"
+        value: "600"
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
