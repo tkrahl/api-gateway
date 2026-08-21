@@ -9,9 +9,12 @@ public class GatewayProperties {
   private String donacionesUrl = "https://donaciones-dgs7.onrender.com";
   private String logisticaUrl = "https://logisticaweb.onrender.com";
   private String incentivosUrl = "https://incentivos-movn.onrender.com";
+  private String telegramBotUrl = "https://telegram-bot-z236.onrender.com";
   private RateLimit rateLimit = new RateLimit();
   private Cors cors = new Cors();
   private int healthBackendTimeoutSec = 45;
+  private String adminSecret = "";
+  private int adminCleanTimeoutSec = 60;
 
   public String dyeUrl() {
     return dyeUrl;
@@ -45,6 +48,14 @@ public class GatewayProperties {
     this.incentivosUrl = incentivosUrl;
   }
 
+  public String telegramBotUrl() {
+    return telegramBotUrl;
+  }
+
+  public void setTelegramBotUrl(String telegramBotUrl) {
+    this.telegramBotUrl = telegramBotUrl;
+  }
+
   public RateLimit rateLimit() {
     return rateLimit;
   }
@@ -67,6 +78,22 @@ public class GatewayProperties {
 
   public void setHealthBackendTimeoutSec(int healthBackendTimeoutSec) {
     this.healthBackendTimeoutSec = healthBackendTimeoutSec;
+  }
+
+  public String adminSecret() {
+    return adminSecret;
+  }
+
+  public void setAdminSecret(String adminSecret) {
+    this.adminSecret = adminSecret == null ? "" : adminSecret;
+  }
+
+  public int adminCleanTimeoutSec() {
+    return adminCleanTimeoutSec;
+  }
+
+  public void setAdminCleanTimeoutSec(int adminCleanTimeoutSec) {
+    this.adminCleanTimeoutSec = adminCleanTimeoutSec;
   }
 
   public static class RateLimit {
