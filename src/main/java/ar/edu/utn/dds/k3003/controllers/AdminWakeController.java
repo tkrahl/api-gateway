@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.controllers;
 
 import ar.edu.utn.dds.k3003.config.GatewayProperties;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,10 +34,13 @@ public class AdminWakeController {
 
   private final GatewayProperties properties;
   private final WebClient webClient;
+  private final MeterRegistry registry;
 
-  public AdminWakeController(GatewayProperties properties, WebClient.Builder webClientBuilder) {
+  public AdminWakeController(
+      GatewayProperties properties, WebClient.Builder webClientBuilder, MeterRegistry registry) {
     this.properties = properties;
     this.webClient = webClientBuilder.build();
+    this.registry = registry;
   }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,6 +56,14 @@ public class AdminWakeController {
                 results.put(String.valueOf(row.get("name")), stripName(row));
               }
               boolean allAwake = list.stream().allMatch(r -> "AWAKE".equals(r.get("outcome")));
+              registry
+                  .counter(
+                      "gateway.admin.wake",
+                      "scope",
+                      "all",
+                      "resultado",
+                      allAwake ? "ok" : "partial")
+                  .increment();
               Map<String, Object> response = new LinkedHashMap<>();
               response.put("status", allAwake ? "OK" : "PARTIAL");
               response.put("services", results);
@@ -64,6 +76,9 @@ public class AdminWakeController {
   public Mono<ResponseEntity<Map<String, Object>>> wakeOne(@PathVariable("service") String service) {
     Target target = targetFor(service);
     if (target == null) {
+      registry
+          .counter("gateway.admin.wake", "scope", "one", "resultado", "not_found")
+          .increment();
       Map<String, Object> body = Map.of("status", "NOT_FOUND", "error", "servicio desconocido: " + service);
       return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(body));
     }
@@ -72,6 +87,16 @@ public class AdminWakeController {
         .map(
             row -> {
               boolean awake = "AWAKE".equals(row.get("outcome"));
+              registry
+                  .counter(
+                      "gateway.admin.wake",
+                      "scope",
+                      "one",
+                      "resultado",
+                      awake ? "ok" : "fail",
+                      "service",
+                      target.name())
+                  .increment();
               Map<String, Object> response = new LinkedHashMap<>();
               response.put("status", awake ? "OK" : "FAIL");
               response.put("service", stripName(row));

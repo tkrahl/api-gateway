@@ -13,6 +13,8 @@ class RequestLoggingFilterTest {
     assertEquals("logistica", RequestLoggingFilter.resolveRoute("/api/logistica/depositos"));
     assertEquals("incentivos", RequestLoggingFilter.resolveRoute("/api/incentivos/mision"));
     assertEquals("gateway", RequestLoggingFilter.resolveRoute("/health"));
+    assertEquals("admin", RequestLoggingFilter.resolveRoute("/admin/wake"));
+    assertEquals("admin", RequestLoggingFilter.resolveRoute("/admin/clean"));
     assertEquals("unknown", RequestLoggingFilter.resolveRoute("/otro"));
   }
 }

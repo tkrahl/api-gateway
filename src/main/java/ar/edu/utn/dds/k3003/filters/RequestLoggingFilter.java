@@ -1,7 +1,9 @@
 package ar.edu.utn.dds.k3003.filters;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -54,13 +56,20 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
         .filter(exchange.mutate().request(mutated).build())
         .doOnSuccess(
             ignored -> {
-              int status = exchange.getResponse().getStatusCode() != null
-                  ? exchange.getResponse().getStatusCode().value()
-                  : 0;
+              int status =
+                  exchange.getResponse().getStatusCode() != null
+                      ? exchange.getResponse().getStatusCode().value()
+                      : 0;
               long elapsed = System.currentTimeMillis() - start;
+              String statusTag = String.valueOf(status);
               registry
-                  .counter("gateway.requests", "route", route, "status", String.valueOf(status))
+                  .counter("gateway.requests", "route", route, "status", statusTag)
                   .increment();
+              Timer.builder("gateway.request.duration")
+                  .tag("route", route)
+                  .tag("status", statusTag)
+                  .register(registry)
+                  .record(elapsed, TimeUnit.MILLISECONDS);
               log.info(
                   "gateway route={} method={} path={} status={} ms={} requestId={}",
                   route,
@@ -99,6 +108,9 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
     }
     if (path.startsWith("/api/incentivos")) {
       return "incentivos";
+    }
+    if (path.startsWith("/admin")) {
+      return "admin";
     }
     if (path.equals("/health") || path.equals("/")) {
       return "gateway";

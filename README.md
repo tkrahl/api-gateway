@@ -56,7 +56,8 @@ curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 | `DONACIONES_URL` | donaciones-dgs7.onrender.com | Backend Donaciones |
 | `LOGISTICA_URL` | logisticaweb.onrender.com | Backend Logística |
 | `INCENTIVOS_URL` | incentivos-movn.onrender.com | Backend Incentivos |
-| `DDAPI` | — | API key Datadog |
+| `DDAPI` | — | API key Datadog (export Micrometer) |
+| `APP_ENV` | `local` / `produccion` | Tag `env` en métricas |
 | `RATE_LIMIT_ENABLED` | `true` | Activar rate limit |
 | `RATE_LIMIT_RPM` | `600` | Requests por minuto por IP |
 | `CORS_ALLOWED_ORIGINS` | `*` | Orígenes CORS (coma-separados) |
@@ -90,6 +91,7 @@ mvn test
 
 | Archivo | Uso |
 |---------|-----|
+| [`docs/DATADOG.md`](./docs/DATADOG.md) | Métricas scope `app:api-gateway` |
 | [`docs/resources/donatrack-api-gateway.yaml`](./docs/resources/donatrack-api-gateway.yaml) | OpenAPI 3.0 — importar en Swagger UI / SwaggerHub |
 | [`docs/resources/insomnia.yaml`](./docs/resources/insomnia.yaml) | Coleccion Insomnia — **Import → From File** |
 

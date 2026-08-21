@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.controllers;
 
 import ar.edu.utn.dds.k3003.config.GatewayProperties;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,10 +35,13 @@ public class AdminCleanController {
 
   private final GatewayProperties properties;
   private final WebClient webClient;
+  private final MeterRegistry registry;
 
-  public AdminCleanController(GatewayProperties properties, WebClient.Builder webClientBuilder) {
+  public AdminCleanController(
+      GatewayProperties properties, WebClient.Builder webClientBuilder, MeterRegistry registry) {
     this.properties = properties;
     this.webClient = webClientBuilder.build();
+    this.registry = registry;
   }
 
   @DeleteMapping(value = "/clean", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,6 +49,7 @@ public class AdminCleanController {
       @RequestHeader(value = "Authorization", required = false) String authorization) {
 
     if (!authorized(authorization)) {
+      registry.counter("gateway.admin.clean", "resultado", "unauthorized").increment();
       Map<String, Object> body =
           Map.of("status", "UNAUTHORIZED", "error", "Bearer token requerido o invalido");
       return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body));
@@ -101,6 +106,9 @@ public class AdminCleanController {
                 results.put(name, detail);
               }
               boolean allOk = list.stream().allMatch(r -> "OK".equals(r.get("outcome")));
+              registry
+                  .counter("gateway.admin.clean", "resultado", allOk ? "ok" : "partial")
+                  .increment();
               Map<String, Object> response = new LinkedHashMap<>();
               response.put("status", allOk ? "OK" : "PARTIAL");
               response.put("services", results);

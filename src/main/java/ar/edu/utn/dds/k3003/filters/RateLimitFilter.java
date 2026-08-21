@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.filters;
 
 import ar.edu.utn.dds.k3003.config.GatewayProperties;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,10 +34,12 @@ public class RateLimitFilter implements WebFilter, Ordered {
   static final String BOT_CLIENT = "telegram-bot";
 
   private final GatewayProperties properties;
+  private final MeterRegistry registry;
   private final Map<String, WindowCounter> counters = new ConcurrentHashMap<>();
 
-  public RateLimitFilter(GatewayProperties properties) {
+  public RateLimitFilter(GatewayProperties properties, MeterRegistry registry) {
     this.properties = properties;
+    this.registry = registry;
   }
 
   @Override
@@ -61,6 +64,7 @@ public class RateLimitFilter implements WebFilter, Ordered {
     }
 
     LOG.warn("rate-limit 429 path={} client={}", path, clientKey);
+    registry.counter("gateway.rate_limited", "path", sanitizePath(path)).increment();
     exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
     exchange.getResponse().getHeaders().add("Retry-After", "60");
     exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
@@ -107,6 +111,21 @@ public class RateLimitFilter implements WebFilter, Ordered {
       return false;
     }
     return expected.equals(authorization.substring(prefix.length()).trim());
+  }
+
+  static String sanitizePath(String path) {
+    if (path == null || path.isBlank()) {
+      return "unknown";
+    }
+    int secondSlash = path.indexOf('/', 1);
+    if (secondSlash < 0) {
+      return path;
+    }
+    int thirdSlash = path.indexOf('/', secondSlash + 1);
+    if (thirdSlash < 0) {
+      return path;
+    }
+    return path.substring(0, thirdSlash);
   }
 
   static String resolveClientKey(ServerWebExchange exchange) {
