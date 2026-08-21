@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 public class RequestLoggingFilter implements GlobalFilter, Ordered {
 
   private static final Logger log = LoggerFactory.getLogger(RequestLoggingFilter.class);
-  private static final String REQUEST_ID_HEADER = "X-Request-Id";
+  public static final String REQUEST_ID_HEADER = "x-request-id";
 
   private final MeterRegistry registry;
 
@@ -35,10 +35,11 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
       return chain.filter(exchange);
     }
 
-    String requestId = request.getHeaders().getFirst(REQUEST_ID_HEADER);
-    if (requestId == null || requestId.isBlank()) {
-      requestId = UUID.randomUUID().toString();
-    }
+    String incomingId = request.getHeaders().getFirst(REQUEST_ID_HEADER);
+    String requestId =
+        (incomingId == null || incomingId.isBlank())
+            ? UUID.randomUUID().toString()
+            : incomingId;
 
     String route = resolveRoute(path);
     String finalRequestId = requestId;
@@ -46,9 +47,23 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
     ServerHttpRequest mutated =
         request
             .mutate()
-            .header(REQUEST_ID_HEADER, finalRequestId)
-            .header("X-Forwarded-By", "donatrack-api-gateway")
+            .headers(
+                headers -> {
+                  headers.set(REQUEST_ID_HEADER, finalRequestId);
+                  headers.set("X-Forwarded-By", "donatrack-api-gateway");
+                })
             .build();
+
+    exchange.getResponse().getHeaders().set(REQUEST_ID_HEADER, finalRequestId);
+
+    log.info(
+        "Incoming request requestId={} method={} path={} query={} remote={} headers={}",
+        finalRequestId,
+        mutated.getMethod(),
+        path,
+        mutated.getURI().getRawQuery(),
+        mutated.getRemoteAddress(),
+        mutated.getHeaders());
 
     long start = System.currentTimeMillis();
 
@@ -71,23 +86,24 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
                   .register(registry)
                   .record(elapsed, TimeUnit.MILLISECONDS);
               log.info(
-                  "gateway route={} method={} path={} status={} ms={} requestId={}",
+                  "Outgoing response requestId={} route={} method={} path={} status={} headers={} ms={}",
+                  finalRequestId,
                   route,
-                  request.getMethod(),
+                  mutated.getMethod(),
                   path,
                   status,
-                  elapsed,
-                  finalRequestId);
+                  exchange.getResponse().getHeaders(),
+                  elapsed);
             })
         .doOnError(
             error -> {
               registry.counter("gateway.errors", "route", route).increment();
               log.warn(
-                  "gateway route={} path={} error={} requestId={}",
+                  "Outgoing response requestId={} route={} path={} error={}",
+                  finalRequestId,
                   route,
                   path,
-                  error.getMessage(),
-                  finalRequestId);
+                  error.getMessage());
             });
   }
 
