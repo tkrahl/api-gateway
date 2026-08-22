@@ -258,6 +258,10 @@ class AdminEntregaIntegrationTest {
               if (!html.contains("incentivos-demo.js")) {
                 throw new AssertionError("La página de Incentivos debería cargar el seed de demo");
               }
+              if (!html.contains("seedCrecienteDemo") || !html.contains("seedRevolucionDemo")) {
+                throw new AssertionError(
+                    "La demo de clase debería incluir las tabs creciente y revolución");
+              }
             });
   }
 }

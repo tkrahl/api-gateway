@@ -538,6 +538,33 @@
       .demo-wrap {
         padding: 14px 16px 18px;
       }
+      .demo-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .demo-tab {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 12.5px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .demo-tab:hover {
+        background: var(--bg-elev-2);
+        color: var(--text);
+      }
+      .demo-tab.active {
+        background: rgba(77, 140, 255, 0.16);
+        border-color: rgba(77, 140, 255, 0.45);
+        color: #fff;
+        font-weight: 600;
+      }
       .demo-intro {
         font-size: 13px;
         color: var(--text-dim);
@@ -717,11 +744,15 @@
       import { createClient, HttpError } from "/seeds/client.js";
       import {
         seedIncentivosDemo,
+        seedCrecienteDemo,
+        seedRevolucionDemo,
         completarVigesimaDonacion,
         registrarQuejaYProcesar,
-        loadDemoState,
-        saveDemoState,
-      } from "/seeds/helpers/incentivos-demo.js";
+        completarQuintaCreciente,
+        completarUndecimaGrande,
+        loadDemoBundle,
+        saveDemoBundle,
+      } from "/seeds/helpers/incentivos-demo.js?v=3";
 
       const MODULE_ID = "{{MODULE_ID}}";
       const SHORT_LABELS = {
@@ -948,8 +979,34 @@
       }
 
       const demoClient = createClient();
-      let demoState = loadDemoState();
+      let demoBundle = loadDemoBundle();
       let demoBusy = false;
+
+      const DEMO_TAB_META = {
+        exitosas: {
+          label: "20 aceptadas → Transformador",
+          intro:
+            "Ocasional → Colaborador (3 categorías) y deja al donador en <strong>COLABORADOR</strong> con <strong>19 ACEPTADA</strong> y la misión <strong>Donaciones Exitosas</strong> (salto más corto). El último transpaso: la 20ª, o la queja.",
+        },
+        creciente: {
+          label: "Ser creciente → Salvador",
+          intro:
+            "Deja un <strong>COLABORADOR</strong> con la misión <strong>Donaciones Ascendentes</strong> (asignada a mano: si no, Incentivos elegiría Exitosas por ser el salto más corto) y 4 donaciones 2, 4, 6, 8. La 5ª, más grande, te lleva a <strong>SALVADOR</strong>.",
+        },
+        revolucion: {
+          label: "+10 grandes → Revolucionario",
+          intro:
+            "Deja un <strong>SALVADOR</strong> con misión <strong>Revolución Donadora</strong> y <strong>10 donaciones de 51 unidades</strong>. Hace falta <em>más de 10</em> donaciones de &gt; 50: la 11ª (ej. 60) te lleva a <strong>REVOLUCIONARIO</strong>.",
+        },
+      };
+
+      function currentDemoState() {
+        return demoBundle.byTab[demoBundle.tab] || null;
+      }
+
+      function persistDemoBundle() {
+        saveDemoBundle(demoBundle);
+      }
 
       function appendDemoLog(level, message) {
         const box = document.getElementById("demoLog");
@@ -971,10 +1028,7 @@
             els.status.textContent = current + "/" + total + " · " + label;
             els.status.classList.remove("error");
           },
-          saveResult: function (result) {
-            demoState = result;
-            saveDemoState(result);
-          },
+          saveResult: function () {},
         };
       }
 
@@ -1004,35 +1058,93 @@
         );
       }
 
+      function misionText(state) {
+        if (!state || !state.mision) return "—";
+        return (
+          (state.mision.nombre || "") + (state.mision.tipo ? " · " + state.mision.tipo : "")
+        );
+      }
+
       function renderDemoResult(state) {
         const box = document.getElementById("demoResult");
         const next = document.getElementById("demoNext");
         if (!box || !next) return;
+        const tab = demoBundle.tab;
         if (!state) {
           box.innerHTML = "";
           next.innerHTML =
             "<p>Recomendado: borrá toda la data desde el Dashboard antes de precargar, para no mezclar corridas.</p>";
           return;
         }
-        const mision =
-          state.mision && (state.mision.nombre || state.mision.tipo)
-            ? (state.mision.nombre || "") +
-              (state.mision.tipo ? " · " + state.mision.tipo : "")
-            : "—";
+        if (tab === "creciente") {
+          box.innerHTML =
+            demoCard("Donador", state.donadorId) +
+            demoCard("Categoría", state.categoria) +
+            demoCard("Misión en curso", misionText(state)) +
+            demoCard("Cantidades", (state.cantidades || []).join(" → ") || "—") +
+            demoCard("5ª donación", state.quintaDonacionId || "(todavía no)");
+          next.innerHTML =
+            "<p><strong>Qué queda para vos</strong></p><ol>" +
+            "<li>Registrá una donación de este donador con cantidad <strong>mayor a 8</strong> (ej. 10), pasala a <code>ACEPTADA</code> y procesá → <strong>SALVADOR</strong>.</li>" +
+            "</ol><p>El botón de arriba hace ese paso si preferís no ir a Postman.</p>";
+          return;
+        }
+        if (tab === "revolucion") {
+          box.innerHTML =
+            demoCard("Donador", state.donadorId) +
+            demoCard("Categoría", state.categoria) +
+            demoCard("Misión en curso", misionText(state)) +
+            demoCard("Grandes (&gt;50)", state.grandesCount) +
+            demoCard("11ª donación", state.undecimaDonacionId || "(todavía no)");
+          next.innerHTML =
+            "<p><strong>Qué queda para vos</strong></p><ol>" +
+            "<li>Registrá una donación de <strong>más de 50 unidades</strong> (ej. 60), pasala a <code>ACEPTADA</code> y procesá → <strong>REVOLUCIONARIO</strong>.</li>" +
+            "</ol><p>El umbral es <code>count &gt; 10</code>, por eso con 10 todavía no alcanza.</p>";
+          return;
+        }
         box.innerHTML =
           demoCard("Donador", state.donadorId) +
           demoCard("Categoría", state.categoria) +
-          demoCard("Misión en curso", mision) +
+          demoCard("Misión en curso", misionText(state)) +
           demoCard("Aceptadas", (state.donacionesAceptadasIds || []).length) +
           demoCard("Donación para queja", state.quejaTargetId) +
           demoCard("20ª donación", state.donacionVigesimaId || "(todavía no)");
         next.innerHTML =
           "<p><strong>Qué queda para vos</strong></p><ol>" +
-          "<li>Registrá una donación de este donador, pasala a <code>ACEPTADA</code> y ejecutá <code>POST /api/incentivos/donadores/{id}/procesar</code> → pasa a <strong>TRANSFORMADOR</strong>.</li>" +
+          "<li>Registrá una donación, pasala a <code>ACEPTADA</code> y procesá → <strong>TRANSFORMADOR</strong>.</li>" +
           "<li>Después, quejá la donación <code>" +
           escapeHtml(state.quejaTargetId || "…") +
-          "</code> (<code>POST /api/donaciones/donaciones/{id}/queja</code>) y volvé a procesar → queda en <strong>19 ACEPTADAS</strong> y vuelve a <strong>COLABORADOR</strong>.</li>" +
-          "</ol><p>Los botones de arriba hacen exactamente esos dos pasos si preferís no ir a Postman.</p>";
+          "</code> y volvé a procesar → <strong>19 ACEPTADAS</strong> y <strong>COLABORADOR</strong>.</li>" +
+          "</ol>";
+      }
+
+      function demoActionsHtml(state) {
+        const tab = demoBundle.tab;
+        if (tab === "creciente") {
+          return (
+            '<button type="button" class="btn primary" id="demoSeedBtn"><span class="spinner" aria-hidden="true"></span><span>Precargar escenario</span></button>' +
+            '<button type="button" class="btn" id="demoQuintaBtn"' +
+            (state && !state.quintaHecha ? "" : " disabled") +
+            '><span class="spinner" aria-hidden="true"></span><span>Hacer 5ª creciente + procesar</span></button>'
+          );
+        }
+        if (tab === "revolucion") {
+          return (
+            '<button type="button" class="btn primary" id="demoSeedBtn"><span class="spinner" aria-hidden="true"></span><span>Precargar escenario</span></button>' +
+            '<button type="button" class="btn" id="demoUndecimaBtn"' +
+            (state && !state.undecimaHecha ? "" : " disabled") +
+            '><span class="spinner" aria-hidden="true"></span><span>Hacer 11ª grande + procesar</span></button>'
+          );
+        }
+        return (
+          '<button type="button" class="btn primary" id="demoSeedBtn"><span class="spinner" aria-hidden="true"></span><span>Precargar escenario</span></button>' +
+          '<button type="button" class="btn" id="demoVigesimaBtn"' +
+          (state && !state.vigesimaHecha ? "" : " disabled") +
+          '><span class="spinner" aria-hidden="true"></span><span>Hacer 20ª ACEPTADA + procesar</span></button>' +
+          '<button type="button" class="btn warn" id="demoQuejaBtn"' +
+          (state && state.quejaTargetId && !state.quejaHecha ? "" : " disabled") +
+          '><span class="spinner" aria-hidden="true"></span><span>Queja + procesar (vuelve a Colaborador)</span></button>'
+        );
       }
 
       function renderIncentivosDemo() {
@@ -1040,31 +1152,53 @@
         els.tableWrap.classList.add("demo-open");
         lastRows = [];
         lastColumns = [];
-        lastPayload = demoState;
-        els.copyBtn.disabled = !demoState;
+        const state = currentDemoState();
+        lastPayload = state;
+        els.copyBtn.disabled = !state;
+        const tabs = ["exitosas", "creciente", "revolucion"]
+          .map(function (id) {
+            const active = demoBundle.tab === id ? " active" : "";
+            return (
+              '<button type="button" class="demo-tab' +
+              active +
+              '" data-demo-tab="' +
+              id +
+              '">' +
+              escapeHtml(DEMO_TAB_META[id].label) +
+              "</button>"
+            );
+          })
+          .join("");
+        const meta = DEMO_TAB_META[demoBundle.tab] || DEMO_TAB_META.exitosas;
         els.tableWrap.innerHTML =
           '<div class="demo-wrap">' +
-          '<p class="demo-intro">Precarga el escenario de clase: Ocasional → Colaborador (3 categorías), deja al donador en <strong>COLABORADOR</strong> con <strong>19 donaciones ACEPTADA</strong> y la misión <strong>Donaciones Exitosas</strong> (el salto más corto; Ascendentes a Salvador queda cargada pero no asignada). El último transpaso lo hacés vos: la 20ª donación, o la queja.</p>' +
+          '<div class="demo-tabs">' +
+          tabs +
+          "</div>" +
+          '<p class="demo-intro">' +
+          meta.intro +
+          "</p>" +
           '<div class="demo-actions">' +
-          '<button type="button" class="btn primary" id="demoSeedBtn"><span class="spinner" aria-hidden="true"></span><span>Precargar escenario</span></button>' +
-          '<button type="button" class="btn" id="demoVigesimaBtn"' +
-          (demoState && !demoState.vigesimaHecha ? "" : " disabled") +
-          '><span class="spinner" aria-hidden="true"></span><span>Hacer 20ª ACEPTADA + procesar</span></button>' +
-          '<button type="button" class="btn warn" id="demoQuejaBtn"' +
-          (demoState && demoState.quejaTargetId && !demoState.quejaHecha ? "" : " disabled") +
-          '><span class="spinner" aria-hidden="true"></span><span>Queja + procesar (vuelve a Colaborador)</span></button>' +
+          demoActionsHtml(state) +
           "</div>" +
           '<div class="demo-log" id="demoLog" aria-live="polite"></div>' +
           '<div class="demo-result" id="demoResult"></div>' +
           '<div class="demo-next" id="demoNext"></div>' +
           "</div>";
-        renderDemoResult(demoState);
+        renderDemoResult(state);
         bindDemoButtons();
       }
 
       function setDemoBusy(busy) {
         demoBusy = busy;
-        ["demoSeedBtn", "demoVigesimaBtn", "demoQuejaBtn"].forEach(function (id) {
+        const ids = [
+          "demoSeedBtn",
+          "demoVigesimaBtn",
+          "demoQuejaBtn",
+          "demoQuintaBtn",
+          "demoUndecimaBtn",
+        ];
+        ids.forEach(function (id) {
           const btn = document.getElementById(id);
           if (!btn) return;
           if (busy) {
@@ -1075,38 +1209,51 @@
           }
         });
         if (!busy) {
+          const state = currentDemoState();
+          const s = document.getElementById("demoSeedBtn");
+          if (s) s.disabled = false;
           const v = document.getElementById("demoVigesimaBtn");
           const q = document.getElementById("demoQuejaBtn");
-          const s = document.getElementById("demoSeedBtn");
-          if (v) v.disabled = !(demoState && !demoState.vigesimaHecha);
-          if (q) q.disabled = !(demoState && demoState.quejaTargetId && !demoState.quejaHecha);
-          if (s) s.disabled = false;
+          const c = document.getElementById("demoQuintaBtn");
+          const r = document.getElementById("demoUndecimaBtn");
+          if (v) v.disabled = !(state && !state.vigesimaHecha);
+          if (q) q.disabled = !(state && state.quejaTargetId && !state.quejaHecha);
+          if (c) c.disabled = !(state && !state.quintaHecha);
+          if (r) r.disabled = !(state && !state.undecimaHecha);
         }
       }
 
       async function runDemoAction(kind) {
         if (demoBusy) return;
         const logBox = document.getElementById("demoLog");
-        if (logBox && kind === "seed") logBox.innerHTML = "";
+        if (logBox && String(kind).indexOf("seed") === 0) logBox.innerHTML = "";
         setDemoBusy(true);
         const ctx = demoCtx();
+        const tab = demoBundle.tab;
+        const state = currentDemoState();
         try {
           let next;
           if (kind === "seed") {
-            next = await seedIncentivosDemo(ctx);
+            if (tab === "creciente") next = await seedCrecienteDemo(ctx);
+            else if (tab === "revolucion") next = await seedRevolucionDemo(ctx);
+            else next = await seedIncentivosDemo(ctx);
           } else if (kind === "vigesima") {
-            next = await completarVigesimaDonacion(ctx, demoState);
-          } else {
-            if (demoState && !demoState.vigesimaHecha) {
+            next = await completarVigesimaDonacion(ctx, state);
+          } else if (kind === "queja") {
+            if (state && !state.vigesimaHecha) {
               appendDemoLog(
                 "warn",
-                "Todavía no hiciste la 20ª: la queja va a bajar de 19 a 18 y se queda en COLABORADOR (no se ve la pérdida de Transformador)."
+                "Todavía no hiciste la 20ª: la queja va a bajar de 19 a 18 y se queda en COLABORADOR."
               );
             }
-            next = await registrarQuejaYProcesar(ctx, demoState);
+            next = await registrarQuejaYProcesar(ctx, state);
+          } else if (kind === "quinta") {
+            next = await completarQuintaCreciente(ctx, state);
+          } else {
+            next = await completarUndecimaGrande(ctx, state);
           }
-          demoState = next;
-          saveDemoState(next);
+          demoBundle.byTab[tab] = next;
+          persistDemoBundle();
           lastPayload = next;
           els.copyBtn.disabled = false;
           renderDemoResult(next);
@@ -1122,24 +1269,25 @@
       }
 
       function bindDemoButtons() {
+        document.querySelectorAll("[data-demo-tab]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            const id = btn.getAttribute("data-demo-tab");
+            if (!id || id === demoBundle.tab || demoBusy) return;
+            demoBundle.tab = id;
+            persistDemoBundle();
+            renderIncentivosDemo();
+          });
+        });
         const seedBtn = document.getElementById("demoSeedBtn");
         const vigBtn = document.getElementById("demoVigesimaBtn");
         const quejaBtn = document.getElementById("demoQuejaBtn");
-        if (seedBtn) {
-          seedBtn.addEventListener("click", function () {
-            runDemoAction("seed");
-          });
-        }
-        if (vigBtn) {
-          vigBtn.addEventListener("click", function () {
-            runDemoAction("vigesima");
-          });
-        }
-        if (quejaBtn) {
-          quejaBtn.addEventListener("click", function () {
-            runDemoAction("queja");
-          });
-        }
+        const quintaBtn = document.getElementById("demoQuintaBtn");
+        const undecimaBtn = document.getElementById("demoUndecimaBtn");
+        if (seedBtn) seedBtn.addEventListener("click", function () { runDemoAction("seed"); });
+        if (vigBtn) vigBtn.addEventListener("click", function () { runDemoAction("vigesima"); });
+        if (quejaBtn) quejaBtn.addEventListener("click", function () { runDemoAction("queja"); });
+        if (quintaBtn) quintaBtn.addEventListener("click", function () { runDemoAction("quinta"); });
+        if (undecimaBtn) undecimaBtn.addEventListener("click", function () { runDemoAction("undecima"); });
       }
 
       function asList(value) {
@@ -1491,7 +1639,7 @@
         if (isIncentivosDemoView(resource)) {
           els.resourceTitle.textContent = resource.label;
           els.resourcePath.textContent = "Incentivos · precarga para la prueba en clase";
-          els.status.textContent = demoState
+          els.status.textContent = currentDemoState()
             ? "Hay un escenario guardado de esta pestaña"
             : "Sin escenario todavía";
           els.status.classList.remove("error");
