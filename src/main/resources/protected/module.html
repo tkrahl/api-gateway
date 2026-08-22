@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DonaTrack — Módulo</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A9%BA%3C/text%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --bg: #0b0f17;
+        --bg-elev: #121826;
+        --bg-elev-2: #182034;
+        --border: #232c42;
+        --text: #e6edf7;
+        --text-dim: #9aa5bd;
+        --text-muted: #6b7691;
+        --accent: #6aa9ff;
+        --accent-strong: #4d8cff;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        --radius: 14px;
+        --sidebar-w: 232px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        min-height: 100vh;
+      }
+      .shell {
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+        min-height: 100vh;
+      }
+      @media (max-width: 900px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: sticky;
+          top: 0;
+          z-index: 5;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+      }
+
+      .sidebar {
+        background: linear-gradient(180deg, #10182a 0%, #0c121e 100%);
+        border-right: 1px solid var(--border);
+        padding: 16px 12px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        animation: sidebarIn 0.35s ease both;
+      }
+      @keyframes sidebarIn {
+        from {
+          opacity: 0;
+          transform: translateX(-14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg-elev-2);
+        color: var(--text);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+      }
+      .back-btn svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        opacity: 0.85;
+      }
+      .back-btn:hover {
+        background: #1e2740;
+        border-color: rgba(106, 169, 255, 0.45);
+        transform: translateX(-1px);
+      }
+      .back-btn:active {
+        transform: translateX(0);
+      }
+
+      .side-brand {
+        padding: 0 4px;
+      }
+      .side-brand .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .side-brand h1 {
+        margin: 4px 0 0;
+        font-size: 15px;
+        font-weight: 650;
+        line-height: 1.25;
+      }
+      .side-brand .sub {
+        margin-top: 2px;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .nav-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .nav-group-title {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+        padding: 0 10px 6px;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 10px;
+        border-radius: 9px;
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 13px;
+        border: 1px solid transparent;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: rgba(77, 140, 255, 0.16);
+        border-color: rgba(77, 140, 255, 0.35);
+        color: #fff;
+        font-weight: 600;
+      }
+      .nav-item .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        flex-shrink: 0;
+      }
+      .nav-item.active .dot {
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(106, 169, 255, 0.2);
+      }
+      .nav-item.muted {
+        opacity: 0.72;
+        font-size: 12.5px;
+      }
+      .nav-item.muted:hover {
+        opacity: 1;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 100vh;
+        background: radial-gradient(900px 420px at 0% 0%, rgba(77, 140, 255, 0.1), transparent 55%),
+          var(--bg);
+        animation: contentIn 0.4s ease both;
+      }
+      @keyframes contentIn {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .content-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 18px 22px 10px;
+        border-bottom: 1px solid transparent;
+      }
+      .content-top h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .content-top .subtitle {
+        color: var(--text-muted);
+        font-size: 13px;
+        margin-top: 2px;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 16px;
+        padding: 16px 22px 40px;
+        flex: 1;
+        align-items: start;
+      }
+      @media (max-width: 720px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .resources {
+        padding: 12px;
+      }
+      .resources h3 {
+        margin: 0 0 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      .resource-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 4px;
+        cursor: pointer;
+        font-size: 13.5px;
+        font-family: inherit;
+      }
+      .resource-btn:hover {
+        background: var(--bg-elev-2);
+      }
+      .resource-btn.active {
+        background: rgba(77, 140, 255, 0.16);
+        border-color: rgba(77, 140, 255, 0.35);
+      }
+      .resource-btn .path {
+        display: block;
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        word-break: break-all;
+      }
+
+      .main {
+        padding: 16px;
+        min-height: 420px;
+      }
+      .main-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .main-head h3 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .main-head .meta {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: var(--bg-elev-2);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .btn.primary {
+        background: var(--accent-strong);
+        border-color: transparent;
+        color: #fff;
+      }
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .btn.loading .spinner {
+        display: inline-block;
+      }
+      .spinner {
+        display: none;
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        vertical-align: -2px;
+        margin-right: 6px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .status {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+        min-height: 1.2em;
+      }
+      .status.error {
+        color: #f87171;
+      }
+      .table-wrap {
+        overflow: auto;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        max-height: calc(100vh - 220px);
+      }
+      table.data {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+      }
+      table.data th,
+      table.data td {
+        border-bottom: 1px solid var(--border);
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      table.data th {
+        position: sticky;
+        top: 0;
+        background: var(--bg-elev-2);
+        color: var(--text-dim);
+        font-weight: 600;
+        z-index: 1;
+      }
+      table.data tr:hover td {
+        background: rgba(77, 140, 255, 0.06);
+      }
+      table.data td.cell-copy {
+        cursor: pointer;
+      }
+      table.data td.cell-copy:hover {
+        color: var(--accent);
+      }
+      .empty {
+        color: var(--text-muted);
+        font-size: 13.5px;
+        padding: 24px 8px;
+      }
+      .params {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: end;
+        margin-bottom: 12px;
+      }
+      .params label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .params input {
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        padding: 7px 10px;
+        font-size: 13px;
+        min-width: 140px;
+      }
+      .toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 20;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .side-logout {
+        margin-top: auto;
+        padding-top: 8px;
+      }
+      .side-logout .btn {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Navegación">
+        <a class="back-btn" href="/admin" title="Volver al dashboard de status">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M15 6l-6 6 6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="side-brand">
+          <div class="eyebrow">Explorador</div>
+          <h1 id="moduleTitle">Módulo</h1>
+          <div class="sub" id="moduleSubtitle">—</div>
+        </div>
+
+        <nav class="nav-group" aria-label="Acceso">
+          <div class="nav-group-title">Acceso</div>
+          <a class="nav-item muted" href="/admin">
+            <span class="dot" aria-hidden="true"></span>
+            API Gateway
+          </a>
+          <a class="nav-item muted" href="/admin">
+            <span class="dot" aria-hidden="true"></span>
+            Bot Telegram
+          </a>
+        </nav>
+
+        <nav class="nav-group" id="modulesNav" aria-label="Módulos"></nav>
+
+        <form class="side-logout" method="post" action="/admin/logout">
+          <button class="btn" type="submit">Salir</button>
+        </form>
+      </aside>
+
+      <div class="content">
+        <div class="content-top">
+          <div>
+            <h2 id="pageTitle">Recursos</h2>
+            <div class="subtitle">GET vía gateway · clic en una celda para copiar</div>
+          </div>
+        </div>
+
+        <div class="workspace">
+          <aside class="panel resources">
+            <h3>Recursos</h3>
+            <div id="resourceList"></div>
+          </aside>
+          <section class="panel main">
+            <div class="main-head">
+              <div>
+                <h3 id="resourceTitle">Elegí un recurso</h3>
+                <div class="meta" id="resourcePath">—</div>
+              </div>
+              <div class="actions">
+                <button class="btn" id="copyBtn" type="button" disabled>Copiar</button>
+                <button class="btn primary" id="refreshBtn" type="button" disabled>
+                  <span class="spinner" aria-hidden="true"></span>
+                  <span>Actualizar</span>
+                </button>
+              </div>
+            </div>
+            <div class="params" id="paramsBar" hidden></div>
+            <div class="status" id="statusLine"></div>
+            <div class="table-wrap" id="tableWrap">
+              <div class="empty">Seleccioná un recurso para cargar el GET.</div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+
+    <script type="module">
+      import { MODULE_CATALOG, MODULE_ORDER } from "/seeds/module-catalog.js";
+
+      const MODULE_ID = "{{MODULE_ID}}";
+      const SHORT_LABELS = {
+        dye: "DyE",
+        donaciones: "Donaciones",
+        logistica: "Logística",
+        incentivos: "Incentivos",
+      };
+
+      const mod = MODULE_CATALOG[MODULE_ID];
+      if (!mod) {
+        window.location.replace("/admin");
+      }
+
+      const els = {
+        title: document.getElementById("moduleTitle"),
+        subtitle: document.getElementById("moduleSubtitle"),
+        pageTitle: document.getElementById("pageTitle"),
+        modulesNav: document.getElementById("modulesNav"),
+        list: document.getElementById("resourceList"),
+        resourceTitle: document.getElementById("resourceTitle"),
+        resourcePath: document.getElementById("resourcePath"),
+        paramsBar: document.getElementById("paramsBar"),
+        status: document.getElementById("statusLine"),
+        tableWrap: document.getElementById("tableWrap"),
+        copyBtn: document.getElementById("copyBtn"),
+        refreshBtn: document.getElementById("refreshBtn"),
+        toast: document.getElementById("toast"),
+      };
+
+      document.title = "DonaTrack — " + mod.title;
+      els.title.textContent = SHORT_LABELS[MODULE_ID] || mod.title;
+      els.subtitle.textContent = mod.subtitle || "";
+      els.pageTitle.textContent = mod.title;
+
+      let activeResource = null;
+      let lastPayload = null;
+      let lastRows = [];
+      let lastColumns = [];
+
+      function escapeHtml(str) {
+        return String(str == null ? "" : str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function showToast(msg) {
+        els.toast.textContent = msg;
+        els.toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () {
+          els.toast.classList.remove("show");
+        }, 1600);
+      }
+
+      function readParamValues(resource) {
+        const values = {};
+        const defs = [].concat(resource.pathParams || []).concat(resource.params || []);
+        defs.forEach(function (p) {
+          const input = document.getElementById("param-" + p.name);
+          values[p.name] = input ? String(input.value || "").trim() : "";
+        });
+        return values;
+      }
+
+      function resolveUrl(resource, values) {
+        values = values || {};
+        let path = resource.path || "";
+        (resource.pathParams || []).forEach(function (p) {
+          path = path.replace("{" + p.name + "}", encodeURIComponent(values[p.name] || ""));
+        });
+        const qs = new URLSearchParams();
+        (resource.params || []).forEach(function (p) {
+          if (values[p.name]) qs.set(p.name, values[p.name]);
+        });
+        const query = qs.toString();
+        if (query) path += (path.indexOf("?") >= 0 ? "&" : "?") + query;
+        if (resource.absolute || !mod.service) return path;
+        return "/api/" + mod.service + path;
+      }
+
+      function renderParamsBar(resource) {
+        const defs = [].concat(resource.pathParams || []).concat(resource.params || []);
+        if (!defs.length) {
+          els.paramsBar.hidden = true;
+          els.paramsBar.innerHTML = "";
+          return;
+        }
+        els.paramsBar.hidden = false;
+        els.paramsBar.innerHTML =
+          defs
+            .map(function (p) {
+              return (
+                "<label>" +
+                escapeHtml(p.label || p.name) +
+                (p.required ? " *" : "") +
+                '<input id="param-' +
+                escapeHtml(p.name) +
+                '" type="text" spellcheck="false" placeholder="' +
+                escapeHtml(p.name) +
+                '" /></label>'
+              );
+            })
+            .join("") +
+          '<button class="btn primary" type="button" id="paramsLoadBtn">Cargar</button>';
+        const btn = document.getElementById("paramsLoadBtn");
+        if (btn) {
+          btn.addEventListener("click", function () {
+            loadResource(resource, true);
+          });
+        }
+      }
+
+      function renderModulesNav() {
+        els.modulesNav.innerHTML =
+          '<div class="nav-group-title">Módulos</div>' +
+          MODULE_ORDER.map(function (id) {
+            const m = MODULE_CATALOG[id];
+            if (!m) return "";
+            const active = id === MODULE_ID ? " active" : "";
+            return (
+              '<a class="nav-item' +
+              active +
+              '" href="/admin/modules/' +
+              id +
+              '">' +
+              '<span class="dot" aria-hidden="true"></span>' +
+              escapeHtml(SHORT_LABELS[id] || m.title) +
+              "</a>"
+            );
+          }).join("");
+      }
+
+      function renderResourceList() {
+        els.list.innerHTML = mod.resources
+          .map(function (r) {
+            const active = activeResource && activeResource.id === r.id ? " active" : "";
+            return (
+              '<button type="button" class="resource-btn' +
+              active +
+              '" data-resource="' +
+              escapeHtml(r.id) +
+              '">' +
+              escapeHtml(r.label) +
+              '<span class="path">' +
+              escapeHtml(resolveUrl(r)) +
+              "</span>" +
+              "</button>"
+            );
+          })
+          .join("");
+      }
+
+      function cellValue(value) {
+        if (value == null) return "";
+        if (typeof value === "object") {
+          try {
+            return JSON.stringify(value);
+          } catch (_) {
+            return String(value);
+          }
+        }
+        return String(value);
+      }
+
+      function preferredColumns(rows) {
+        const keys = new Set();
+        rows.forEach(function (row) {
+          if (row && typeof row === "object" && !Array.isArray(row)) {
+            Object.keys(row).forEach(function (k) {
+              keys.add(k);
+            });
+          }
+        });
+        const preferred = ["id", "nombre", "apellido", "razonSocial", "estado", "categoria", "tipo"];
+        const ordered = [];
+        preferred.forEach(function (k) {
+          if (keys.has(k)) {
+            ordered.push(k);
+            keys.delete(k);
+          }
+        });
+        Array.from(keys)
+          .sort()
+          .forEach(function (k) {
+            ordered.push(k);
+          });
+        return ordered;
+      }
+
+      function normalizeRows(data) {
+        if (Array.isArray(data)) {
+          if (!data.length) return { mode: "empty", rows: [], columns: [] };
+          if (typeof data[0] !== "object" || data[0] == null) {
+            return {
+              mode: "list",
+              rows: data.map(function (v, i) {
+                return { "#": i + 1, value: v };
+              }),
+              columns: ["#", "value"],
+            };
+          }
+          return { mode: "table", rows: data, columns: preferredColumns(data) };
+        }
+        if (data && typeof data === "object") {
+          const rows = Object.keys(data).map(function (k) {
+            return { campo: k, valor: data[k] };
+          });
+          return { mode: "kv", rows: rows, columns: ["campo", "valor"] };
+        }
+        return { mode: "scalar", rows: [{ valor: data }], columns: ["valor"] };
+      }
+
+      function renderTable(normalized) {
+        lastRows = normalized.rows;
+        lastColumns = normalized.columns;
+        if (!normalized.rows.length) {
+          els.tableWrap.innerHTML = '<div class="empty">Sin resultados (lista vacía).</div>';
+          return;
+        }
+        const head =
+          "<thead><tr>" +
+          normalized.columns
+            .map(function (c) {
+              return "<th>" + escapeHtml(c) + "</th>";
+            })
+            .join("") +
+          "</tr></thead>";
+        const body =
+          "<tbody>" +
+          normalized.rows
+            .map(function (row) {
+              return (
+                "<tr>" +
+                normalized.columns
+                  .map(function (col) {
+                    const raw = cellValue(row[col]);
+                    return (
+                      '<td class="cell-copy" title="Clic para copiar" data-copy="' +
+                      escapeHtml(raw) +
+                      '">' +
+                      escapeHtml(raw) +
+                      "</td>"
+                    );
+                  })
+                  .join("") +
+                "</tr>"
+              );
+            })
+            .join("") +
+          "</tbody>";
+        els.tableWrap.innerHTML = '<table class="data">' + head + body + "</table>";
+      }
+
+      async function loadResource(resource, force) {
+        const switching = !activeResource || activeResource.id !== resource.id;
+        activeResource = resource;
+        renderResourceList();
+        if (switching) renderParamsBar(resource);
+
+        const values = readParamValues(resource);
+        const needs = []
+          .concat(resource.pathParams || [])
+          .concat(resource.params || [])
+          .filter(function (p) {
+            return p.required;
+          });
+        const missing = needs.filter(function (p) {
+          return !values[p.name];
+        });
+        if (missing.length && !force) {
+          els.resourceTitle.textContent = resource.label;
+          els.resourcePath.textContent = "GET " + resolveUrl(resource, values);
+          els.status.textContent =
+            "Completá " +
+            missing
+              .map(function (p) {
+                return p.label || p.name;
+              })
+              .join(", ") +
+            " y pulsá Cargar.";
+          els.status.classList.remove("error");
+          els.refreshBtn.disabled = false;
+          els.copyBtn.disabled = true;
+          els.tableWrap.innerHTML =
+            '<div class="empty">Este endpoint requiere parámetros.</div>';
+          return;
+        }
+        if (missing.length && force) {
+          els.status.textContent =
+            "Faltan parámetros requeridos: " +
+            missing
+              .map(function (p) {
+                return p.name;
+              })
+              .join(", ");
+          els.status.classList.add("error");
+          return;
+        }
+
+        const url = resolveUrl(resource, values);
+        els.resourceTitle.textContent = resource.label;
+        els.resourcePath.textContent = "GET " + url;
+        els.status.textContent = "Cargando…";
+        els.status.classList.remove("error");
+        els.copyBtn.disabled = true;
+        els.refreshBtn.classList.add("loading");
+        els.refreshBtn.disabled = true;
+
+        try {
+          const res = await fetch(url, {
+            cache: "no-store",
+            headers: { Accept: "application/json" },
+          });
+          const text = await res.text();
+          let data = null;
+          if (text) {
+            try {
+              data = JSON.parse(text);
+            } catch (_) {
+              data = text;
+            }
+          }
+          if (!res.ok) {
+            throw new Error(
+              "HTTP " +
+                res.status +
+                (typeof data === "string"
+                  ? " · " + data
+                  : data && data.message
+                    ? " · " + data.message
+                    : "")
+            );
+          }
+          lastPayload = data;
+          const normalized = normalizeRows(data);
+          renderTable(normalized);
+          const count = Array.isArray(data) ? data.length : normalized.rows.length;
+          els.status.textContent =
+            "OK · " +
+            count +
+            (Array.isArray(data)
+              ? " ítem" + (count === 1 ? "" : "s")
+              : " fila" + (count === 1 ? "" : "s"));
+          if (Array.isArray(data) && data.length === 0) {
+            els.status.textContent =
+              "OK · lista vacía ([]). No hay datos en este recurso todavía.";
+          }
+          els.copyBtn.disabled = false;
+        } catch (err) {
+          lastPayload = null;
+          lastRows = [];
+          els.tableWrap.innerHTML =
+            '<div class="empty">No se pudo cargar el recurso.</div>';
+          els.status.textContent = err && err.message ? err.message : String(err);
+          els.status.classList.add("error");
+          els.copyBtn.disabled = true;
+        } finally {
+          els.refreshBtn.classList.remove("loading");
+          els.refreshBtn.disabled = !activeResource;
+        }
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      }
+
+      function buildTsv() {
+        if (!lastColumns.length) {
+          return lastPayload == null ? "" : JSON.stringify(lastPayload, null, 2);
+        }
+        const lines = [lastColumns.join("\t")];
+        lastRows.forEach(function (row) {
+          lines.push(
+            lastColumns
+              .map(function (c) {
+                return cellValue(row[c]).replace(/\t/g, " ").replace(/\r?\n/g, " ");
+              })
+              .join("\t")
+          );
+        });
+        return lines.join("\n");
+      }
+
+      els.list.addEventListener("click", function (event) {
+        const btn = event.target.closest("[data-resource]");
+        if (!btn) return;
+        const id = btn.getAttribute("data-resource");
+        const resource = mod.resources.find(function (r) {
+          return r.id === id;
+        });
+        if (resource) loadResource(resource);
+      });
+
+      els.refreshBtn.addEventListener("click", function () {
+        if (activeResource) loadResource(activeResource);
+      });
+
+      els.copyBtn.addEventListener("click", function () {
+        const text = buildTsv();
+        if (!text) return;
+        copyText(text).then(function () {
+          showToast("Copiado al portapapeles");
+        });
+      });
+
+      els.tableWrap.addEventListener("click", function (event) {
+        const cell = event.target.closest("td.cell-copy");
+        if (!cell) return;
+        const value = cell.getAttribute("data-copy") || cell.textContent || "";
+        copyText(value).then(function () {
+          showToast("Valor copiado");
+        });
+      });
+
+      renderModulesNav();
+      renderResourceList();
+      if (mod.resources[0]) {
+        loadResource(mod.resources[0]);
+      }
+    </script>
+  </body>
+</html>

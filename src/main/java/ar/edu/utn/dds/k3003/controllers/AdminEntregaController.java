@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,7 @@ import reactor.core.publisher.Mono;
  * <pre>
  *   GET  /admin              → si no hay cookie válida, 303 → /admin/login
  *                            → con cookie válida, sirve dashboard.html
+ *   GET  /admin/modules/{id} → explorador de recursos (dye|donaciones|logistica|incentivos)
  *   GET  /admin/login        → página de login (form)
  *   POST /admin/login        → valida password contra ADMIN_SECRET, setea cookie httpOnly
  *   POST /admin/logout       → borra la cookie
@@ -43,8 +46,11 @@ public class AdminEntregaController {
 
   private static final String COOKIE_NAME = "donatrack_session";
   private static final String DASHBOARD_RESOURCE = "protected/dashboard.html";
+  private static final String MODULE_RESOURCE = "protected/module.html";
   private static final String LOGIN_RESOURCE = "protected/login.html";
   private static final String COOKIE_PATH = "/admin";
+  private static final Set<String> MODULE_IDS =
+      Set.of("dye", "donaciones", "logistica", "incentivos");
 
   private final GatewayProperties properties;
 
@@ -59,6 +65,23 @@ public class AdminEntregaController {
       return redirect(COOKIE_PATH + "/login");
     }
     return htmlResponse(readClasspathResource(DASHBOARD_RESOURCE), true, null);
+  }
+
+  @GetMapping("/modules/{moduleId}")
+  public ResponseEntity<byte[]> modulePage(
+      @PathVariable("moduleId") String moduleId,
+      @CookieValue(name = COOKIE_NAME, required = false) String session)
+      throws IOException {
+    if (!isAuthenticated(session)) {
+      return redirect(COOKIE_PATH + "/login");
+    }
+    String id = moduleId == null ? "" : moduleId.trim().toLowerCase();
+    if (!MODULE_IDS.contains(id)) {
+      return redirect(COOKIE_PATH);
+    }
+    String html = new String(readClasspathResource(MODULE_RESOURCE), StandardCharsets.UTF_8);
+    html = html.replace("{{MODULE_ID}}", id);
+    return htmlResponse(html.getBytes(StandardCharsets.UTF_8), true, null);
   }
 
   @GetMapping("/login")
