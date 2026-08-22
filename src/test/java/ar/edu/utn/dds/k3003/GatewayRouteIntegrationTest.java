@@ -1,5 +1,6 @@
 package ar.edu.utn.dds.k3003;
 
+import ar.edu.utn.dds.k3003.filters.RequestLoggingFilter;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -64,6 +65,33 @@ class GatewayRouteIntegrationTest {
     var recorded = dyeBackend.takeRequest();
     org.junit.jupiter.api.Assertions.assertEquals("/actuator/health", recorded.getPath());
     org.junit.jupiter.api.Assertions.assertEquals("dye", recorded.getHeader("X-Gateway-Route"));
+    String generatedRequestId = recorded.getHeader(RequestLoggingFilter.REQUEST_ID_HEADER);
+    org.junit.jupiter.api.Assertions.assertNotNull(generatedRequestId);
+    java.util.UUID.fromString(generatedRequestId);
+  }
+
+  @Test
+  void proxy_propagaXRequestIdAlBackend() throws InterruptedException {
+    dyeBackend.enqueue(
+        new MockResponse()
+            .setResponseCode(200)
+            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .setBody("{\"ok\":true}"));
+
+    String requestId = "11111111-2222-3333-4444-555555555555";
+    webTestClient
+        .get()
+        .uri("/api/dye/actuator/health")
+        .header(RequestLoggingFilter.REQUEST_ID_HEADER, requestId)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectHeader()
+        .valueEquals(RequestLoggingFilter.REQUEST_ID_HEADER, requestId);
+
+    var recorded = dyeBackend.takeRequest();
+    org.junit.jupiter.api.Assertions.assertEquals(
+        requestId, recorded.getHeader(RequestLoggingFilter.REQUEST_ID_HEADER));
   }
 
   @Test

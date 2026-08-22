@@ -12,7 +12,7 @@ Punto de entrada único HTTP para clientes externos (bot Telegram, Postman, e2e)
 | **Ocultar backends** | Los microservicios no se exponen directamente a clientes externos |
 | **Rate limiting** | Protege Render free tier ante picos o loops accidentales (600 req/min por IP; el bot Telegram queda exceptuado) |
 | **CORS centralizado** | El bot/web puede llamar desde cualquier origen sin tocar cada módulo |
-| **Trazabilidad** | `X-Request-Id` propagado a todos los backends + logs y métricas `gateway.requests` |
+| **Trazabilidad** | `x-request-id` (UUID) generado y propagado a todos los backends + logs Incoming/Outgoing |
 | **Health agregado** | `GET /health` consulta los 4 módulos en un solo request |
 | **Evolución** | Mañana podés agregar auth, circuit breaker o cache sin cambiar el bot |
 
@@ -44,7 +44,7 @@ curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 - **Routing** con `StripPrefix=2` (quita `/api/{modulo}` antes de proxear)
 - **Rate limit** in-memory por IP (ventana fija de 1 minuto, sin Redis)
 - **CORS** configurable
-- **Request logging** + header `X-Request-Id`
+- **Request logging** Incoming/Outgoing + header `x-request-id` (UUID) hacia cada backend
 - **Métricas** Micrometer → Datadog (`app:api-gateway`)
 - **Deploy** Docker + Render Blueprint
 
