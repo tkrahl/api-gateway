@@ -151,7 +151,17 @@ export async function seedIncentivosDemo(ctx) {
     capacidadMaxima: 5000,
     stockActual: [],
   });
-  log("ok", "Donador " + donador.id + " · depósito " + deposito.id);
+  await client.patch("logistica", "/depositos/" + deposito.id + "/algoritmoMM", {
+    algoritmoMM: "SUB_ATENDIDOS",
+  });
+  log(
+    "ok",
+    "Donador " +
+      donador.id +
+      " · depósito " +
+      deposito.id +
+      " (algoritmo SUB_ATENDIDOS)"
+  );
 
   const base = { donador, deposito };
 
