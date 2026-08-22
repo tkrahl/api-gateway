@@ -191,4 +191,50 @@ class AdminEntregaIntegrationTest {
   void dashboardHtml_directoNoAccesibleYaQueSeMovioAProtected() {
     webTestClient.get().uri("/dashboard.html").exchange().expectStatus().isNotFound();
   }
+
+  @Test
+  void module_gatewayOBotRedirigeAlDashboard() {
+    webTestClient
+        .get()
+        .uri("/admin/modules/gateway")
+        .cookie("donatrack_session", SECRET)
+        .exchange()
+        .expectStatus()
+        .isSeeOther()
+        .expectHeader()
+        .location("/admin");
+
+    webTestClient
+        .get()
+        .uri("/admin/modules/bot")
+        .cookie("donatrack_session", SECRET)
+        .exchange()
+        .expectStatus()
+        .isSeeOther()
+        .expectHeader()
+        .location("/admin");
+  }
+
+  @Test
+  void module_conCookieValidaDevuelvePagina() {
+    webTestClient
+        .get()
+        .uri("/admin/modules/dye")
+        .cookie("donatrack_session", SECRET)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectHeader()
+        .contentTypeCompatibleWith("text/html")
+        .expectBody(String.class)
+        .value(
+            html -> {
+              if (html.contains("{{MODULE_ID}}")) {
+                throw new AssertionError("El placeholder {{MODULE_ID}} no fue reemplazado");
+              }
+              if (!html.contains("MODULE_ID = \"dye\"")) {
+                throw new AssertionError("Se esperaba MODULE_ID = \"dye\"");
+              }
+            });
+  }
 }

@@ -436,6 +436,37 @@
         margin-bottom: 2px;
       }
 
+      .card.explorable {
+        cursor: pointer;
+        transition: border-color 0.15s ease;
+      }
+
+      .card.explorable:hover {
+        border-color: rgba(106, 169, 255, 0.45);
+      }
+
+      .card-explore {
+        display: inline-flex;
+        margin-top: 12px;
+        font-size: 12.5px;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .card-explore:hover {
+        text-decoration: underline;
+      }
+
+      .arch-diagram a {
+        cursor: pointer;
+      }
+
+      .arch-diagram a:hover rect {
+        stroke: #6aa9ff;
+        stroke-width: 2;
+      }
+
       .badge {
         display: inline-flex;
         align-items: center;
@@ -919,611 +950,6 @@
         gap: 8px;
       }
 
-      .seeds-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-      }
-
-      .e4-workspace {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 148px;
-        gap: 24px;
-        align-items: start;
-      }
-
-      @media (max-width: 960px) {
-        .e4-workspace {
-          grid-template-columns: 1fr;
-        }
-        .e4-timeline-rail {
-          display: none;
-        }
-      }
-
-      .e4-modules {
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-        min-width: 0;
-      }
-
-      .e4-module {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .e4-module-head {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .e4-module-head h3 {
-        margin: 0;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text);
-      }
-
-      .e4-module-head .count {
-        font-size: 11.5px;
-        color: var(--text-muted);
-      }
-
-      .seed-card {
-        background: var(--bg-elev);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 16px 18px;
-        box-shadow: var(--shadow);
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        position: relative;
-        overflow: hidden;
-        scroll-margin-top: 80px;
-        transition: opacity 0.25s ease, border-color 0.25s ease;
-      }
-
-      .seed-card.checked {
-        opacity: 0.52;
-        border-color: rgba(46, 160, 67, 0.4);
-      }
-
-      .seed-card.checked .req-title {
-        text-decoration: line-through;
-        text-decoration-color: rgba(46, 160, 67, 0.5);
-      }
-
-      .seed-card::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: var(--unknown);
-        transition: background 0.2s ease;
-      }
-
-      .seed-card.running::before {
-        background: var(--accent);
-      }
-      .seed-card.done::before {
-        background: var(--up);
-      }
-      .seed-card.failed::before {
-        background: var(--down);
-      }
-      .seed-card.checked::before {
-        background: var(--up);
-      }
-
-      .seed-head-row {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .req-check-wrap {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding-top: 2px;
-      }
-
-      .req-check {
-        width: 18px;
-        height: 18px;
-        accent-color: var(--up);
-        cursor: pointer;
-      }
-
-      .req-check-label {
-        font-size: 11px;
-        color: var(--text-muted);
-        cursor: pointer;
-        user-select: none;
-        white-space: nowrap;
-      }
-
-      .req-title-wrap {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .req-kind {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        width: fit-content;
-        padding: 2px 8px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-      }
-
-      .req-kind.required {
-        color: #e3b341;
-        background: rgba(227, 179, 65, 0.08);
-        border-color: rgba(227, 179, 65, 0.35);
-      }
-
-      .req-kind.optional {
-        color: var(--text-muted);
-        background: var(--bg-elev-2);
-      }
-
-      .req-title {
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 1.45;
-        color: var(--text);
-        margin: 0;
-      }
-
-      .seed-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .seed-title {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .seed-title .kicker {
-        color: var(--text-muted);
-        font-size: 11px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .seed-title .name {
-        font-size: 15px;
-        font-weight: 600;
-      }
-
-      .seed-tags {
-        display: flex;
-        gap: 4px;
-        flex-wrap: wrap;
-      }
-
-      .seed-tags .tag {
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 999px;
-        background: var(--bg-elev-2);
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-        letter-spacing: 0.05em;
-      }
-
-      .seed-desc {
-        font-size: 12.5px;
-        color: var(--text-dim);
-        line-height: 1.5;
-      }
-
-      .seed-guide {
-        display: flex;
-        flex-direction: column;
-        border-radius: var(--radius-sm);
-        background: var(--bg-elev-2);
-        border: 1px solid var(--border);
-        font-size: 12px;
-        line-height: 1.55;
-        overflow: hidden;
-      }
-
-      .seed-guide-item {
-        border-bottom: 1px solid var(--border);
-      }
-
-      .seed-guide-item:last-child {
-        border-bottom: none;
-      }
-
-      .seed-guide-summary {
-        list-style: none;
-        cursor: pointer;
-        padding: 10px 14px;
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        user-select: none;
-        transition: background 0.15s ease;
-      }
-
-      .seed-guide-summary:hover {
-        background: rgba(255, 255, 255, 0.03);
-      }
-
-      .seed-guide-summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .seed-guide-summary::marker {
-        content: "";
-      }
-
-      .seed-guide-summary::after {
-        content: "▸";
-        flex-shrink: 0;
-        color: var(--text-muted);
-        font-size: 12px;
-        transition: transform 0.2s ease;
-      }
-
-      .seed-guide-item[open] .seed-guide-summary::after {
-        transform: rotate(90deg);
-      }
-
-      .seed-guide-panel {
-        padding: 0 14px 12px;
-      }
-
-      .seed-guide-body {
-        color: var(--text-dim);
-        margin: 0;
-      }
-
-      .seed-guide-list {
-        margin: 0;
-        padding-left: 0;
-        list-style: none;
-        counter-reset: guide-step;
-        color: var(--text-dim);
-      }
-
-      .seed-guide-list li {
-        counter-increment: guide-step;
-        margin: 0 0 10px;
-        padding-left: 28px;
-        position: relative;
-        line-height: 1.5;
-      }
-
-      .seed-guide-list li::before {
-        content: counter(guide-step);
-        position: absolute;
-        left: 0;
-        top: 1px;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: var(--bg-elev);
-        border: 1px solid var(--border);
-        color: var(--accent);
-        font-size: 10px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .seed-guide-list li:last-child {
-        margin-bottom: 0;
-      }
-
-      .seed-progress {
-        display: none;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .seed-card.running .seed-progress,
-      .seed-card.done .seed-progress,
-      .seed-card.failed .seed-progress,
-      .seed-card.has-log .seed-progress {
-        display: flex;
-      }
-
-      .seed-progress-bar {
-        height: 6px;
-        background: var(--bg-elev-2);
-        border-radius: 999px;
-        overflow: hidden;
-      }
-
-      .seed-progress-fill {
-        height: 100%;
-        background: var(--accent);
-        width: 0%;
-        transition: width 0.25s ease, background 0.2s ease;
-      }
-
-      .seed-card.done .seed-progress-fill {
-        background: var(--up);
-      }
-
-      .seed-card.failed .seed-progress-fill {
-        background: var(--down);
-      }
-
-      .seed-progress-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 11.5px;
-        color: var(--text-muted);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .seed-log {
-        display: none;
-        max-height: 180px;
-        overflow: auto;
-        padding: 8px 10px;
-        border-radius: var(--radius-sm);
-        background: var(--bg-elev-2);
-        border: 1px solid var(--border);
-        font-size: 11.5px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        line-height: 1.5;
-      }
-
-      .seed-card.running .seed-log,
-      .seed-card.done .seed-log,
-      .seed-card.failed .seed-log,
-      .seed-card.has-log .seed-log {
-        display: block;
-      }
-
-      .seed-log .line {
-        display: block;
-        color: var(--text-dim);
-        word-break: break-word;
-      }
-
-      .seed-log .line.ok {
-        color: var(--up);
-      }
-
-      .seed-log .line.info {
-        color: var(--text-dim);
-      }
-
-      .seed-log .line.error {
-        color: var(--down);
-      }
-
-      .seed-actions {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .seed-actions .status-text {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .seed-action-buttons {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-
-      .seed-actions .clean-card-btn {
-        padding: 7px 11px;
-        font-size: 12px;
-      }
-
-      .seed-actions .action-link {
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .manual-hint {
-        font-size: 11.5px;
-        color: var(--text-muted);
-        line-height: 1.4;
-      }
-
-      .seed-card.interaction-manual .seed-automation,
-      .seed-card.interaction-bot .seed-automation {
-        display: none;
-      }
-
-      .seed-card.interaction-bot .seed-actions {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .e4-timeline-rail {
-        position: sticky;
-        top: 16px;
-        max-height: calc(100vh - 32px);
-        overflow-y: auto;
-        padding: 4px 0;
-      }
-
-      .e4-timeline-legend {
-        font-size: 9.5px;
-        color: var(--text-muted);
-        margin-bottom: 10px;
-        line-height: 1.4;
-        padding: 0 2px;
-      }
-
-      .e4-timeline-legend .star {
-        color: #e3b341;
-      }
-
-      .e4-timeline-progress {
-        font-size: 10px;
-        color: var(--text-muted);
-        margin-bottom: 10px;
-        padding: 8px 8px;
-        background: var(--bg-elev-2);
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--border);
-        text-align: center;
-        line-height: 1.45;
-      }
-
-      .e4-timeline-progress strong {
-        color: var(--up);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .e4-timeline-progress .sub {
-        display: block;
-        font-size: 9px;
-        color: var(--text-muted);
-        margin-top: 2px;
-      }
-
-      .e4-timeline {
-        position: relative;
-        padding: 0;
-      }
-
-      .e4-timeline::before {
-        content: "";
-        position: absolute;
-        left: 7px;
-        top: 4px;
-        bottom: 4px;
-        width: 1px;
-        background: var(--border);
-      }
-
-      .e4-timeline-module {
-        font-size: 9px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        margin: 10px 0 4px 18px;
-      }
-
-      .e4-timeline-module:first-child {
-        margin-top: 0;
-      }
-
-      .e4-timeline-item {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        width: 100%;
-        text-align: left;
-        border: none;
-        background: transparent;
-        padding: 3px 4px 3px 18px;
-        font-size: 9.5px;
-        line-height: 1.2;
-        color: var(--text-muted);
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background 0.15s ease, color 0.15s ease;
-        min-height: 22px;
-      }
-
-      .e4-timeline-item:hover {
-        background: rgba(255, 255, 255, 0.04);
-        color: var(--text-dim);
-      }
-
-      .e4-timeline-item::before {
-        content: "";
-        position: absolute;
-        left: 3px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--bg-elev);
-        border: 1.5px solid var(--border);
-        transition: background 0.2s, border-color 0.2s;
-        flex-shrink: 0;
-      }
-
-      .e4-timeline-item.is-required .tl-star {
-        color: #e3b341;
-        font-size: 8px;
-        line-height: 1;
-        flex-shrink: 0;
-      }
-
-      .e4-timeline-item:not(.is-required) .tl-star {
-        display: none;
-      }
-
-      .e4-timeline-item .tl-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1;
-        min-width: 0;
-      }
-
-      .e4-timeline-item.checked::before {
-        background: var(--up);
-        border-color: var(--up);
-      }
-
-      .e4-timeline-item.active::before {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
-      }
-
-      .e4-timeline-item.checked .tl-label {
-        color: rgba(46, 160, 67, 0.8);
-      }
-
-      .e4-timeline-item:not(.is-required) .tl-label {
-        opacity: 0.75;
-      }
 
       @media (max-width: 640px) {
         .container {
@@ -1718,31 +1144,6 @@
         </div>
       </section>
 
-      <section class="section" aria-labelledby="seeds-title">
-        <div class="section-title">
-          <h2 id="seeds-title">Entrega 4 — prueba manual</h2>
-          <span class="hint">
-            Un punto del enunciado por tarjeta. Usá <strong>borrar data</strong> antes de cada demo.
-            Las tarjetas con API muestran <strong>Preparar escenario</strong>; las del bot abren Telegram; el resto es solo paso a paso en vivo.
-          </span>
-        </div>
-        <div class="e4-workspace" id="e4Workspace">
-          <div class="e4-modules" id="e4Modules">
-            <div class="seed-card" aria-busy="true">
-              <div class="seed-head-row">
-                <span class="req-title">Leyendo requisitos de la Entrega 4…</span>
-              </div>
-            </div>
-          </div>
-          <aside class="e4-timeline-rail" id="e4TimelineRail" aria-label="Progreso de la Entrega 4">
-            <div class="e4-timeline-progress" id="e4TimelineProgress">—</div>
-            <div class="e4-timeline-legend">
-              <span class="star" aria-hidden="true">★</span> Requerido por el enunciado
-            </div>
-            <nav class="e4-timeline" id="e4Timeline"></nav>
-          </aside>
-        </div>
-      </section>
 
       <dialog class="confirm" id="confirmDialog" aria-labelledby="confirm-title">
         <h3 id="confirm-title">¿Borrar toda la data?</h3>
@@ -1881,10 +1282,23 @@
           const kicker = options.kicker
             ? '      <span class="kicker">' + options.kicker + "</span>"
             : "";
+          const explore = !!options.explore;
+          const exploreAttr = explore
+            ? ' data-module="' + key + '" title="Abrir explorador del módulo"'
+            : "";
+          const exploreLink = explore
+            ? '  <a class="card-explore" href="/admin/modules/' +
+              key +
+              '">Explorar recursos →</a>'
+            : "";
           return (
-            '<article class="card" id="card-' +
+            '<article class="card' +
+            (explore ? " explorable" : "") +
+            '" id="card-' +
             key +
-            '">' +
+            '"' +
+            exploreAttr +
+            ">" +
             '  <div class="card-head">' +
             '    <div class="card-title">' +
             kicker +
@@ -1917,6 +1331,7 @@
             key +
             '" style="display:none"></div>' +
             wakeBtn +
+            exploreLink +
             '  <div class="history">' +
             '    <div class="history-label">' +
             "      <span>Historial reciente</span>" +
@@ -1943,7 +1358,7 @@
 
         function buildBackendCards() {
           const html = BACKENDS.map(function (b) {
-            return renderServiceCard(b.key, b.label, { wake: true });
+            return renderServiceCard(b.key, b.label, { wake: true, explore: true });
           }).join("");
           els.grid.innerHTML = html;
         }
@@ -2470,9 +1885,9 @@
             incentivos: s.incentivos || "UNKNOWN",
           };
 
-          const box = function (id, x, y, w, h, label, status) {
+          const box = function (id, x, y, w, h, label, status, href) {
             const c = archFill(status);
-            return (
+            const inner =
               '<g id="' +
               id +
               '">' +
@@ -2495,7 +1910,16 @@
               (y + h / 2 + 4) +
               '" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="600">' +
               svgEsc(label) +
-              "</text></g>"
+              "</text></g>";
+            if (!href) return inner;
+            return (
+              '<a href="' +
+              href +
+              '" aria-label="' +
+              svgEsc(label) +
+              '">' +
+              inner +
+              "</a>"
             );
           };
 
@@ -2562,7 +1986,16 @@
           let moduleArrows = "";
           mods.forEach(function (m) {
             const cy = m.y + modH / 2;
-            moduleBoxes += box("n-" + m.key, modX, m.y, modW, modH, m.label, st[m.key]);
+            moduleBoxes += box(
+              "n-" + m.key,
+              modX,
+              m.y,
+              modW,
+              modH,
+              m.label,
+              st[m.key],
+              "/admin/modules/" + m.key
+            );
             moduleArrows += arrow(
               gw.x + gw.w,
               gw.y + gw.h / 2,
@@ -2720,13 +2153,31 @@
           }
           els.grid.addEventListener("click", function (event) {
             const btn = event.target && event.target.closest && event.target.closest("[data-wake]");
-            if (!btn) return;
-            const key = btn.getAttribute("data-wake");
-            if (key) wakeService(key);
+            if (btn) {
+              const key = btn.getAttribute("data-wake");
+              if (key) wakeService(key);
+              return;
+            }
+            if (event.target && event.target.closest && event.target.closest("a")) return;
+            const card =
+              event.target && event.target.closest && event.target.closest("[data-module]");
+            if (!card) return;
+            const moduleId = card.getAttribute("data-module");
+            if (moduleId) {
+              const href = "/admin/modules/" + moduleId;
+              if (document.startViewTransition) {
+                document.startViewTransition(function () {
+                  window.location.href = href;
+                });
+              } else {
+                window.location.href = href;
+              }
+            }
           });
           if (els.edgeGrid) {
             els.edgeGrid.addEventListener("click", function (event) {
-              const btn = event.target && event.target.closest && event.target.closest("[data-wake]");
+              const btn =
+                event.target && event.target.closest && event.target.closest("[data-wake]");
               if (!btn) return;
               const key = btn.getAttribute("data-wake");
               if (key) wakeService(key);
@@ -2779,497 +2230,5 @@
       })();
     </script>
 
-    <script type="module">
-      import { createClient, HttpError } from "/seeds/client.js";
-      import { loadAllSeeds } from "/seeds/registry.js";
-
-      const RESULTS_KEY_PREFIX = "donatrack.seedResults.";
-      const CHECKED_KEY_PREFIX = "donatrack.e4.checked.";
-      const modulesRoot = document.getElementById("e4Modules");
-      const timelineRoot = document.getElementById("e4Timeline");
-      const timelineProgress = document.getElementById("e4TimelineProgress");
-      const client = createClient(window.location.origin);
-      const runningIds = new Set();
-      const TELEGRAM_BOT_URL = "https://web.telegram.org/k/#@deudatecnicafcbot";
-
-      let flatRequirements = [];
-      let timelineObserver = null;
-
-      const MODULE_TIMELINE_LABEL = {
-        "logistica-a": "Stock",
-        "logistica-b": "Async",
-        dye: "DyE",
-        incentivos: "Incentivos",
-        bot: "Bot",
-      };
-
-      function resolveInteraction(req, mod, seed) {
-        if (req.interaction) return req.interaction;
-        if (mod && mod.interaction) return mod.interaction;
-        if (seed && seed.meta && seed.meta.manualOnly) return "manual";
-        if (seed && seed.run) return "auto";
-        return "manual";
-      }
-
-      function cleanBtnHtml() {
-        return (
-          '<button class="btn danger clean-card-btn" type="button" title="Borrar toda la data de los 4 servicios">' +
-          '<span class="spinner" aria-hidden="true"></span>' +
-          "<span>Borrar data</span>" +
-          "</button>"
-        );
-      }
-
-      function wireCleanButton(card) {
-        const cleanBtn = card.querySelector(".clean-card-btn");
-        if (!cleanBtn) return;
-        cleanBtn.addEventListener("click", function () {
-          if (window.__dashboardApi && window.__dashboardApi.openConfirmClean) {
-            window.__dashboardApi.openConfirmClean();
-          }
-        });
-      }
-
-      function actionsHtml(interaction) {
-        const clean = cleanBtnHtml();
-        if (interaction === "bot") {
-          return (
-            '  <div class="seed-action-buttons">' +
-            clean +
-            '  <a class="btn primary action-link" href="' +
-            escapeHtml(TELEGRAM_BOT_URL) +
-            '" target="_blank" rel="noopener noreferrer">' +
-            "    <span>Abrir bot en Telegram</span>" +
-            '    <span aria-hidden="true">↗</span>' +
-            "  </a>" +
-            "  </div>" +
-            '  <span class="manual-hint">Probá en Telegram y marcá <strong>Probado</strong> cuando termines.</span>'
-          );
-        }
-        if (interaction === "auto") {
-          return (
-            '  <div class="seed-action-buttons">' +
-            clean +
-            '  <button class="btn primary run-btn" type="button">' +
-            '    <span class="spinner" aria-hidden="true"></span>' +
-            "    <span>▶ Preparar escenario</span>" +
-            "  </button>" +
-            '  <button class="btn ghost view-btn" type="button" hidden>Ver resultado JSON</button>' +
-            "  </div>"
-          );
-        }
-        return (
-          '  <div class="seed-action-buttons">' +
-          clean +
-          "  </div>" +
-          '  <span class="manual-hint">Sin preparación automática — seguí el paso a paso en vivo con el profesor.</span>'
-        );
-      }
-
-      function reqKindHtml(req) {
-        if (req.required !== false) {
-          return '<span class="req-kind required" title="Pide el enunciado de la Entrega 4">★ Requerido</span>';
-        }
-        return '<span class="req-kind optional" title="Apoyo para la demo; no es un ítem aparte del enunciado">Apoyo demo</span>';
-      }
-
-      function escapeHtml(str) {
-        return String(str == null ? "" : str)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      function tagsHtml(tags) {
-        if (!tags || !tags.length) return "";
-        return (
-          '<div class="seed-tags">' +
-          tags.map((t) => '<span class="tag">' + escapeHtml(t) + "</span>").join("") +
-          "</div>"
-        );
-      }
-
-      function guideSection(title, bodyHtml, open) {
-        if (!bodyHtml) return "";
-        return (
-          '<details class="seed-guide-item"' + (open ? " open" : "") + ">" +
-          '  <summary class="seed-guide-summary">' + escapeHtml(title) + "</summary>" +
-          '  <div class="seed-guide-panel">' + bodyHtml + "</div>" +
-          "</details>"
-        );
-      }
-
-      function guideTextHtml(value) {
-        if (!value) return "";
-        if (Array.isArray(value)) {
-          return (
-            '<ul class="seed-guide-list">' +
-            value.map((item) => "<li>" + escapeHtml(item) + "</li>").join("") +
-            "</ul>"
-          );
-        }
-        return '<p class="seed-guide-body">' + escapeHtml(value) + "</p>";
-      }
-
-      function guideHtml(guide) {
-        if (!guide) return "";
-        const items = [
-          { title: "Paso a paso", body: guideTextHtml(guide.steps || guide.how || guide.method) },
-          {
-            title: "Resultado esperado",
-            body: guideTextHtml(guide.expected),
-          },
-        ].filter((item) => item.body);
-        if (!items.length) return "";
-        return (
-          '<div class="seed-guide">' +
-          items
-            .map((item, index) => guideSection(item.title, item.body, index === 0))
-            .join("") +
-          "</div>"
-        );
-      }
-
-      function isChecked(id) {
-        try {
-          return localStorage.getItem(CHECKED_KEY_PREFIX + id) === "1";
-        } catch (_) {
-          return false;
-        }
-      }
-
-      function setChecked(id, value) {
-        try {
-          if (value) localStorage.setItem(CHECKED_KEY_PREFIX + id, "1");
-          else localStorage.removeItem(CHECKED_KEY_PREFIX + id);
-        } catch (_) {
-          /* ignore */
-        }
-        syncCheckedUi(id);
-        updateTimelineProgress();
-      }
-
-      function syncCheckedUi(id) {
-        const card = document.getElementById("req-" + id);
-        const dot = document.querySelector('.e4-timeline-item[data-req-id="' + id + '"]');
-        const on = isChecked(id);
-        if (card) card.classList.toggle("checked", on);
-        if (dot) dot.classList.toggle("checked", on);
-      }
-
-      function updateTimelineProgress() {
-        if (!timelineProgress || !flatRequirements.length) return;
-        const done = flatRequirements.filter((r) => isChecked(r.id)).length;
-        const reqTotal = flatRequirements.filter((r) => r.required !== false).length;
-        const reqDone = flatRequirements.filter((r) => r.required !== false && isChecked(r.id)).length;
-        timelineProgress.innerHTML =
-          "<strong>" +
-          reqDone +
-          "</strong> / " +
-          reqTotal +
-          " requeridos" +
-          '<span class="sub">' +
-          done +
-          " / " +
-          flatRequirements.length +
-          " total probados</span>";
-      }
-
-      function renderTimeline(modules) {
-        if (!timelineRoot) return;
-        timelineRoot.innerHTML = "";
-        flatRequirements = [];
-        for (const mod of modules) {
-          const modLabel = document.createElement("div");
-          modLabel.className = "e4-timeline-module";
-          modLabel.textContent = MODULE_TIMELINE_LABEL[mod.id] || mod.title;
-          timelineRoot.appendChild(modLabel);
-          for (const req of mod.requirements) {
-            flatRequirements.push({
-              id: req.id,
-              required: req.required !== false,
-              shortTitle: req.shortTitle || req.requirement,
-            });
-            const btn = document.createElement("button");
-            btn.type = "button";
-            const classes = ["e4-timeline-item"];
-            if (req.required !== false) classes.push("is-required");
-            if (isChecked(req.id)) classes.push("checked");
-            btn.className = classes.join(" ");
-            btn.dataset.reqId = req.id;
-            btn.title = req.requirement;
-            btn.innerHTML =
-              '<span class="tl-star" aria-hidden="true">★</span>' +
-              '<span class="tl-label">' +
-              escapeHtml(req.shortTitle || req.requirement) +
-              "</span>";
-            btn.addEventListener("click", () => {
-              const el = document.getElementById("req-" + req.id);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-            timelineRoot.appendChild(btn);
-          }
-        }
-        updateTimelineProgress();
-        setupTimelineObserver();
-      }
-
-      function setupTimelineObserver() {
-        if (timelineObserver) timelineObserver.disconnect();
-        if (!("IntersectionObserver" in window)) return;
-        timelineObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              const id = entry.target.dataset.reqId;
-              const dot = document.querySelector('.e4-timeline-item[data-req-id="' + id + '"]');
-              if (dot) dot.classList.toggle("active", entry.isIntersecting);
-            });
-          },
-          { root: null, rootMargin: "-20% 0px -60% 0px", threshold: 0 }
-        );
-        document.querySelectorAll(".seed-card[data-req-id]").forEach((card) => {
-          timelineObserver.observe(card);
-        });
-      }
-
-      function renderReqCard(req, seed, mod) {
-        const interaction = resolveInteraction(req, mod, seed);
-        const hasAutoSeed = interaction === "auto" && Boolean(seed && seed.run);
-        const card = document.createElement("article");
-        card.className = "seed-card interaction-" + interaction + (isChecked(req.id) ? " checked" : "");
-        card.id = "req-" + req.id;
-        card.dataset.reqId = req.id;
-
-        const seedMeta = hasAutoSeed ? seed.meta : null;
-        const totalSteps = seedMeta ? seedMeta.totalSteps : 0;
-        const checkId = "check-" + req.id;
-
-        card.innerHTML =
-          '<div class="seed-head-row">' +
-          '  <div class="req-check-wrap">' +
-          '    <input type="checkbox" class="req-check" id="' + escapeHtml(checkId) + '"' +
-          (isChecked(req.id) ? " checked" : "") +
-          ' aria-label="Marcar como probado" />' +
-          '    <label class="req-check-label" for="' + escapeHtml(checkId) + '">Probado</label>' +
-          "  </div>" +
-          '  <div class="req-title-wrap">' +
-          reqKindHtml(req) +
-          '    <p class="req-title">' + escapeHtml(req.requirement) + "</p>" +
-          "  </div>" +
-          "</div>" +
-          guideHtml(req.guide) +
-          '<div class="seed-automation">' +
-          '  <div class="seed-progress">' +
-          '    <div class="seed-progress-label">' +
-          '      <span class="step-label">Listo</span>' +
-          '      <span class="step-count">0 / ' + escapeHtml(totalSteps) + "</span>" +
-          "    </div>" +
-          '    <div class="seed-progress-bar"><div class="seed-progress-fill"></div></div>' +
-          "  </div>" +
-          '  <div class="seed-log" role="log" aria-live="polite"></div>' +
-          "</div>" +
-          '<div class="seed-actions">' +
-          actionsHtml(interaction) +
-          '  <span class="status-text"></span>' +
-          "</div>";
-
-        const checkbox = card.querySelector(".req-check");
-        checkbox.addEventListener("change", () => setChecked(req.id, checkbox.checked));
-
-        wireCleanButton(card);
-
-        if (hasAutoSeed) {
-          card.querySelector(".run-btn").addEventListener("click", () => runSeed(seed, card));
-          card.querySelector(".view-btn").addEventListener("click", () => viewResult(req.id));
-        }
-        return card;
-      }
-
-      function renderModuleSection(mod, seedsById) {
-        const section = document.createElement("section");
-        section.className = "e4-module";
-        section.id = "e4-mod-" + mod.id;
-
-        const head = document.createElement("div");
-        head.className = "e4-module-head";
-        head.innerHTML =
-          "<h3>" +
-          escapeHtml(mod.title) +
-          '</h3><span class="count">' +
-          mod.requirements.length +
-          " punto" +
-          (mod.requirements.length === 1 ? "" : "s") +
-          "</span>";
-        section.appendChild(head);
-
-        const grid = document.createElement("div");
-        grid.className = "seeds-grid";
-        for (const req of mod.requirements) {
-          grid.appendChild(renderReqCard(req, seedsById[req.id], mod));
-        }
-        section.appendChild(grid);
-        return section;
-      }
-
-      function setSeedState(card, state) {
-        card.classList.remove("running", "done", "failed");
-        if (state) card.classList.add(state);
-      }
-
-      function updateProgress(card, current, total, label) {
-        const fill = card.querySelector(".seed-progress-fill");
-        const count = card.querySelector(".step-count");
-        const stepLabel = card.querySelector(".step-label");
-        const pct = total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0;
-        fill.style.width = pct + "%";
-        count.textContent = current + " / " + total;
-        if (label) stepLabel.textContent = label;
-      }
-
-      function appendLog(card, kind, msg) {
-        const container = card.querySelector(".seed-log");
-        const line = document.createElement("span");
-        line.className = "line " + (kind || "info");
-        const stamp = new Date().toLocaleTimeString();
-        line.textContent = "[" + stamp + "] " + msg;
-        container.appendChild(line);
-        container.scrollTop = container.scrollHeight;
-      }
-
-      function setStatusText(card, text) {
-        card.querySelector(".status-text").textContent = text || "";
-      }
-
-      function saveResult(id, result) {
-        try {
-          sessionStorage.setItem(RESULTS_KEY_PREFIX + id, JSON.stringify(result));
-        } catch (_) {
-          /* ignore quota */
-        }
-      }
-
-      function loadResult(id) {
-        try {
-          const raw = sessionStorage.getItem(RESULTS_KEY_PREFIX + id);
-          return raw ? JSON.parse(raw) : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function viewResult(id) {
-        const result = loadResult(id);
-        if (!result) {
-          alert("No hay resultado guardado para el escenario " + id);
-          return;
-        }
-        const w = window.open("", "_blank", "width=760,height=640");
-        if (!w) {
-          alert(JSON.stringify(result, null, 2));
-          return;
-        }
-        w.document.write(
-          '<!doctype html><html><head><title>Resultado seed ' + escapeHtml(id) + '</title>' +
-          '<meta charset="utf-8"/>' +
-          '<style>body{background:#0b0f17;color:#e6edf7;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:24px;margin:0}h1{font-size:14px;color:#9aa5bd;margin:0 0 12px}pre{white-space:pre-wrap;word-break:break-all;font-size:12.5px;line-height:1.5}</style>' +
-          '</head><body><h1>Escenario ' + escapeHtml(id) + ' — resultado</h1><pre>' +
-          escapeHtml(JSON.stringify(result, null, 2)) + '</pre></body></html>'
-        );
-        w.document.close();
-      }
-
-      async function runSeed(seed, card) {
-        if (runningIds.has(seed.id)) return;
-        runningIds.add(seed.id);
-
-        const runBtn = card.querySelector(".run-btn");
-        const viewBtn = card.querySelector(".view-btn");
-        const meta = seed.meta;
-        runBtn.disabled = true;
-        runBtn.classList.add("loading");
-        viewBtn.hidden = true;
-        card.querySelector(".seed-log").innerHTML = "";
-        setStatusText(card, "");
-        setSeedState(card, "running");
-        card.classList.add("has-log");
-        updateProgress(card, 0, meta.totalSteps, "Iniciando…");
-
-        const startedAt = performance.now();
-        const ctx = {
-          client,
-          log: (kind, msg) => appendLog(card, kind, msg),
-          progress: (current, total, label) => updateProgress(card, current, total, label),
-          saveResult: (result) => saveResult(seed.id, result),
-          loadResult,
-        };
-
-        try {
-          appendLog(card, "info", "Preparando " + seed.id + " · " + (meta.title || seed.id));
-          const result = await seed.run(ctx);
-          const elapsed = Math.round(performance.now() - startedAt);
-          updateProgress(card, meta.totalSteps, meta.totalSteps, "Completado ✅");
-          setSeedState(card, "done");
-          setStatusText(card, "OK · " + (elapsed / 1000).toFixed(1) + "s");
-          viewBtn.hidden = false;
-          appendLog(card, "ok", "✔ Terminado en " + elapsed + " ms");
-          if (window.__dashboardApi && window.__dashboardApi.pollNow) {
-            window.__dashboardApi.pollNow();
-          }
-        } catch (err) {
-          setSeedState(card, "failed");
-          setStatusText(card, "FALLÓ");
-          const msg = err instanceof HttpError
-            ? "HTTP " + err.status + " · " + err.url + " · " + (typeof err.body === "string" ? err.body : JSON.stringify(err.body)).slice(0, 400)
-            : (err && err.message ? err.message : String(err));
-          appendLog(card, "error", "✖ " + msg);
-          console.error("Seed " + seed.id + " falló:", err);
-        } finally {
-          runBtn.disabled = false;
-          runBtn.classList.remove("loading");
-          runningIds.delete(seed.id);
-        }
-      }
-
-      async function init() {
-        try {
-          const catalog = await import("/seeds/e4-catalog.js?v=" + Date.now());
-          const E4_MODULES = catalog.E4_MODULES;
-          const { byId: seedsById } = await loadAllSeeds();
-          modulesRoot.innerHTML = "";
-          if (!E4_MODULES.length) {
-            modulesRoot.innerHTML =
-              '<article class="seed-card"><div class="seed-head"><div class="seed-title">' +
-              '<span class="name">Sin requisitos de la Entrega 4 cargados</span>' +
-              "</div></div></article>";
-            return;
-          }
-          for (const mod of E4_MODULES) {
-            modulesRoot.appendChild(renderModuleSection(mod, seedsById));
-          }
-          renderTimeline(E4_MODULES);
-          for (const reqId of Object.keys(seedsById)) {
-            const card = document.getElementById("req-" + reqId);
-            if (!card || !card.classList.contains("interaction-auto")) continue;
-            if (loadResult(reqId)) {
-              card.classList.add("has-log");
-              const viewBtn = card.querySelector(".view-btn");
-              if (viewBtn) viewBtn.hidden = false;
-              const status = card.querySelector(".status-text");
-              if (status) status.textContent = "Escenario preparado";
-            }
-          }
-        } catch (err) {
-          modulesRoot.innerHTML =
-            '<article class="seed-card failed"><div class="seed-head"><div class="seed-title">' +
-            '<span class="name">Error al cargar requisitos de la Entrega 4</span>' +
-            '<span class="kicker" style="margin-top:4px">' + escapeHtml(err && err.message ? err.message : String(err)) + "</span>" +
-            "</div></div></article>";
-          console.error(err);
-        }
-      }
-
-      init();
-    </script>
   </body>
 </html>
