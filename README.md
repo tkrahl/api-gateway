@@ -45,7 +45,7 @@ curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 - **Rate limit** in-memory por IP (ventana fija de 1 minuto, sin Redis)
 - **CORS** configurable
 - **Request logging** Incoming/Outgoing + header `x-request-id` (UUID) hacia cada backend
-- **Métricas** Micrometer → Datadog (`app:api-gateway`)
+- **Métricas y logs** → Datadog (`app:api-gateway`) cuando `DDAPI` está seteada
 - **Deploy** Docker + Render Blueprint
 
 ## Variables de entorno
@@ -56,7 +56,7 @@ curl https://api-gateway-1ujg.onrender.com/api/dye/donadores
 | `DONACIONES_URL` | donaciones-dgs7.onrender.com | Backend Donaciones |
 | `LOGISTICA_URL` | logisticaweb.onrender.com | Backend Logística |
 | `INCENTIVOS_URL` | incentivos-movn.onrender.com | Backend Incentivos |
-| `DDAPI` | — | API key Datadog (export Micrometer) |
+| `DDAPI` | — | API key Datadog (métricas + logs) |
 | `APP_ENV` | `local` / `produccion` | Tag `env` en métricas |
 | `RATE_LIMIT_ENABLED` | `true` | Activar rate limit |
 | `RATE_LIMIT_RPM` | `600` | Requests por minuto por IP |

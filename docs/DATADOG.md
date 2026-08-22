@@ -2,7 +2,15 @@
 
 Scope / common tag: **`app:api-gateway`** (+ `env:local|produccion`).
 
-Auth: env `DDAPI`. Sin key → Micrometer local (no exporta).
+Auth: env `DDAPI`. Sin key → no exporta métricas ni logs.
+
+## Logs
+
+Los logs INFO+ (incluye Incoming/Outgoing y `x-request-id` en MDC/`requestId`) se envían a **Logs Intake** `https://http-intake.logs.datadoghq.com/api/v2/logs`.
+
+En Datadog: **Logs → Explorer**, filtro `service:api-gateway` o `app:api-gateway`. Correlación cross-módulo: `@requestId:<uuid>` o el texto `requestId=` en el mensaje.
+
+Sin `DDAPI` (local/tests) el appender es no-op; la consola sigue igual.
 
 ## Métricas
 
