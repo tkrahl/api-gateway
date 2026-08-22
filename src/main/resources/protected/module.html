@@ -530,6 +530,106 @@
         background: rgba(34, 197, 94, 0.16);
         color: #86efac;
       }
+      .btn.warn {
+        background: #b45309;
+        border-color: transparent;
+        color: #fff;
+      }
+      .demo-wrap {
+        padding: 14px 16px 18px;
+      }
+      .demo-intro {
+        font-size: 13px;
+        color: var(--text-dim);
+        line-height: 1.45;
+        margin: 0 0 12px;
+      }
+      .demo-intro code {
+        font-size: 12px;
+        background: var(--bg-elev-2);
+        padding: 1px 6px;
+        border-radius: 6px;
+      }
+      .demo-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .demo-log {
+        background: #0a0e16;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-height: 180px;
+        max-height: 280px;
+        overflow: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.45;
+        margin-bottom: 12px;
+      }
+      .demo-log .line {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .demo-log .info {
+        color: var(--text-dim);
+      }
+      .demo-log .ok {
+        color: #86efac;
+      }
+      .demo-log .error {
+        color: #f87171;
+      }
+      .demo-log .warn {
+        color: #fbbf24;
+      }
+      .demo-result {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 8px;
+      }
+      .demo-card {
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .demo-card .k {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .demo-card .v {
+        margin-top: 4px;
+        font-size: 13px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        word-break: break-all;
+      }
+      .demo-card .v.cell-copy {
+        cursor: pointer;
+      }
+      .demo-card .v.cell-copy:hover {
+        color: var(--accent);
+      }
+      .demo-next {
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--text-dim);
+        line-height: 1.45;
+      }
+      .demo-next ol {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+      .table-wrap.demo-open {
+        max-height: none;
+        overflow: visible;
+        border: none;
+      }
     </style>
   </head>
   <body>
@@ -614,6 +714,14 @@
 
     <script type="module">
       import { MODULE_CATALOG, MODULE_ORDER } from "/seeds/module-catalog.js";
+      import { createClient, HttpError } from "/seeds/client.js";
+      import {
+        seedIncentivosDemo,
+        completarVigesimaDonacion,
+        registrarQuejaYProcesar,
+        loadDemoState,
+        saveDemoState,
+      } from "/seeds/helpers/incentivos-demo.js";
 
       const MODULE_ID = "{{MODULE_ID}}";
       const SHORT_LABELS = {
@@ -833,6 +941,205 @@
 
       function isDepositosView(resource) {
         return resource && resource.view === "depositos";
+      }
+
+      function isIncentivosDemoView(resource) {
+        return resource && resource.view === "incentivos-demo";
+      }
+
+      const demoClient = createClient();
+      let demoState = loadDemoState();
+      let demoBusy = false;
+
+      function appendDemoLog(level, message) {
+        const box = document.getElementById("demoLog");
+        if (!box) return;
+        const line = document.createElement("div");
+        line.className = "line " + (level || "info");
+        const ts = new Date().toLocaleTimeString("es-AR", { hour12: false });
+        line.textContent = "[" + ts + "] " + message;
+        box.appendChild(line);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function demoCtx() {
+        return {
+          client: demoClient,
+          log: appendDemoLog,
+          progress: function (current, total, label) {
+            appendDemoLog("info", current + "/" + total + " · " + label);
+            els.status.textContent = current + "/" + total + " · " + label;
+            els.status.classList.remove("error");
+          },
+          saveResult: function (result) {
+            demoState = result;
+            saveDemoState(result);
+          },
+        };
+      }
+
+      function formatError(err) {
+        if (err instanceof HttpError) {
+          const body =
+            err.body && typeof err.body === "object"
+              ? JSON.stringify(err.body)
+              : err.body
+                ? String(err.body)
+                : "";
+          return err.message + (body ? " · " + body : "");
+        }
+        return err && err.message ? err.message : String(err);
+      }
+
+      function demoCard(label, value) {
+        const raw = value == null || value === "" ? "—" : String(value);
+        return (
+          '<div class="demo-card"><div class="k">' +
+          escapeHtml(label) +
+          '</div><div class="v cell-copy" title="Clic para copiar" data-copy="' +
+          escapeHtml(raw) +
+          '">' +
+          escapeHtml(raw) +
+          "</div></div>"
+        );
+      }
+
+      function renderDemoResult(state) {
+        const box = document.getElementById("demoResult");
+        const next = document.getElementById("demoNext");
+        if (!box || !next) return;
+        if (!state) {
+          box.innerHTML = "";
+          next.innerHTML =
+            "<p>Recomendado: borrá toda la data desde el Dashboard antes de precargar, para no mezclar corridas.</p>";
+          return;
+        }
+        const mision =
+          state.mision && (state.mision.nombre || state.mision.tipo)
+            ? (state.mision.nombre || "") +
+              (state.mision.tipo ? " · " + state.mision.tipo : "")
+            : "—";
+        box.innerHTML =
+          demoCard("Donador", state.donadorId) +
+          demoCard("Categoría", state.categoria) +
+          demoCard("Misión en curso", mision) +
+          demoCard("Aceptadas", (state.donacionesAceptadasIds || []).length) +
+          demoCard("Donación para queja", state.quejaTargetId) +
+          demoCard("20ª donación", state.donacionVigesimaId || "(todavía no)");
+        next.innerHTML =
+          "<p><strong>Qué queda para vos</strong></p><ol>" +
+          "<li>Registrá una donación de este donador, pasala a <code>ACEPTADA</code> y ejecutá <code>POST /api/incentivos/donadores/{id}/procesar</code> → pasa a <strong>TRANSFORMADOR</strong>.</li>" +
+          "<li>Después, quejá la donación <code>" +
+          escapeHtml(state.quejaTargetId || "…") +
+          "</code> (<code>POST /api/donaciones/donaciones/{id}/queja</code>) y volvé a procesar → queda en <strong>19 ACEPTADAS</strong> y vuelve a <strong>COLABORADOR</strong>.</li>" +
+          "</ol><p>Los botones de arriba hacen exactamente esos dos pasos si preferís no ir a Postman.</p>";
+      }
+
+      function renderIncentivosDemo() {
+        setBackVisible(false);
+        els.tableWrap.classList.add("demo-open");
+        lastRows = [];
+        lastColumns = [];
+        lastPayload = demoState;
+        els.copyBtn.disabled = !demoState;
+        els.tableWrap.innerHTML =
+          '<div class="demo-wrap">' +
+          '<p class="demo-intro">Precarga el escenario de clase: Ocasional → Colaborador (3 categorías), deja al donador en <strong>COLABORADOR</strong> con <strong>19 donaciones ACEPTADA</strong> y la misión <strong>Donaciones Exitosas</strong> (el salto más corto; Ascendentes a Salvador queda cargada pero no asignada). El último transpaso lo hacés vos: la 20ª donación, o la queja.</p>' +
+          '<div class="demo-actions">' +
+          '<button type="button" class="btn primary" id="demoSeedBtn"><span class="spinner" aria-hidden="true"></span><span>Precargar escenario</span></button>' +
+          '<button type="button" class="btn" id="demoVigesimaBtn"' +
+          (demoState && !demoState.vigesimaHecha ? "" : " disabled") +
+          '><span class="spinner" aria-hidden="true"></span><span>Hacer 20ª ACEPTADA + procesar</span></button>' +
+          '<button type="button" class="btn warn" id="demoQuejaBtn"' +
+          (demoState && demoState.quejaTargetId && !demoState.quejaHecha ? "" : " disabled") +
+          '><span class="spinner" aria-hidden="true"></span><span>Queja + procesar (vuelve a Colaborador)</span></button>' +
+          "</div>" +
+          '<div class="demo-log" id="demoLog" aria-live="polite"></div>' +
+          '<div class="demo-result" id="demoResult"></div>' +
+          '<div class="demo-next" id="demoNext"></div>' +
+          "</div>";
+        renderDemoResult(demoState);
+        bindDemoButtons();
+      }
+
+      function setDemoBusy(busy) {
+        demoBusy = busy;
+        ["demoSeedBtn", "demoVigesimaBtn", "demoQuejaBtn"].forEach(function (id) {
+          const btn = document.getElementById(id);
+          if (!btn) return;
+          if (busy) {
+            btn.disabled = true;
+            btn.classList.add("loading");
+          } else {
+            btn.classList.remove("loading");
+          }
+        });
+        if (!busy) {
+          const v = document.getElementById("demoVigesimaBtn");
+          const q = document.getElementById("demoQuejaBtn");
+          const s = document.getElementById("demoSeedBtn");
+          if (v) v.disabled = !(demoState && !demoState.vigesimaHecha);
+          if (q) q.disabled = !(demoState && demoState.quejaTargetId && !demoState.quejaHecha);
+          if (s) s.disabled = false;
+        }
+      }
+
+      async function runDemoAction(kind) {
+        if (demoBusy) return;
+        const logBox = document.getElementById("demoLog");
+        if (logBox && kind === "seed") logBox.innerHTML = "";
+        setDemoBusy(true);
+        const ctx = demoCtx();
+        try {
+          let next;
+          if (kind === "seed") {
+            next = await seedIncentivosDemo(ctx);
+          } else if (kind === "vigesima") {
+            next = await completarVigesimaDonacion(ctx, demoState);
+          } else {
+            if (demoState && !demoState.vigesimaHecha) {
+              appendDemoLog(
+                "warn",
+                "Todavía no hiciste la 20ª: la queja va a bajar de 19 a 18 y se queda en COLABORADOR (no se ve la pérdida de Transformador)."
+              );
+            }
+            next = await registrarQuejaYProcesar(ctx, demoState);
+          }
+          demoState = next;
+          saveDemoState(next);
+          lastPayload = next;
+          els.copyBtn.disabled = false;
+          renderDemoResult(next);
+          appendDemoLog("ok", "Listo.");
+          els.status.textContent = "OK · escenario listo";
+        } catch (err) {
+          appendDemoLog("error", formatError(err));
+          els.status.textContent = formatError(err);
+          els.status.classList.add("error");
+        } finally {
+          setDemoBusy(false);
+        }
+      }
+
+      function bindDemoButtons() {
+        const seedBtn = document.getElementById("demoSeedBtn");
+        const vigBtn = document.getElementById("demoVigesimaBtn");
+        const quejaBtn = document.getElementById("demoQuejaBtn");
+        if (seedBtn) {
+          seedBtn.addEventListener("click", function () {
+            runDemoAction("seed");
+          });
+        }
+        if (vigBtn) {
+          vigBtn.addEventListener("click", function () {
+            runDemoAction("vigesima");
+          });
+        }
+        if (quejaBtn) {
+          quejaBtn.addEventListener("click", function () {
+            runDemoAction("queja");
+          });
+        }
       }
 
       function asList(value) {
@@ -1176,6 +1483,21 @@
             depositDetailId = null;
             setBackVisible(false);
           }
+          if (!isIncentivosDemoView(resource)) {
+            els.tableWrap.classList.remove("demo-open");
+          }
+        }
+
+        if (isIncentivosDemoView(resource)) {
+          els.resourceTitle.textContent = resource.label;
+          els.resourcePath.textContent = "Incentivos · precarga para la prueba en clase";
+          els.status.textContent = demoState
+            ? "Hay un escenario guardado de esta pestaña"
+            : "Sin escenario todavía";
+          els.status.classList.remove("error");
+          els.refreshBtn.disabled = true;
+          renderIncentivosDemo();
+          return;
         }
 
         const values = readParamValues(resource);
@@ -1391,7 +1713,7 @@
           showDepositoFromList(openBtn.getAttribute("data-open-deposito"));
           return;
         }
-        const cell = event.target.closest("td.cell-copy");
+        const cell = event.target.closest(".cell-copy");
         if (!cell) return;
         const value = cell.getAttribute("data-copy") || cell.textContent || "";
         copyText(value).then(function () {

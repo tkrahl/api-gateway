@@ -237,4 +237,27 @@ class AdminEntregaIntegrationTest {
               }
             });
   }
+
+  @Test
+  void module_incentivosDevuelvePaginaConDemo() {
+    webTestClient
+        .get()
+        .uri("/admin/modules/incentivos")
+        .cookie("donatrack_session", SECRET)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectHeader()
+        .contentTypeCompatibleWith("text/html")
+        .expectBody(String.class)
+        .value(
+            html -> {
+              if (!html.contains("MODULE_ID = \"incentivos\"")) {
+                throw new AssertionError("Se esperaba MODULE_ID = \"incentivos\"");
+              }
+              if (!html.contains("incentivos-demo.js")) {
+                throw new AssertionError("La página de Incentivos debería cargar el seed de demo");
+              }
+            });
+  }
 }

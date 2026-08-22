@@ -372,33 +372,34 @@ export const RUNNERS = {
   ]),
 
   I3: {
-    meta: { totalSteps: 4, manualOnly: true },
+    meta: { totalSteps: 12 },
     async run(ctx) {
-      const adv = counter(4, ctx);
-      adv("Preparar donador con misiones (usar Postman si hace falta)");
-      manualSteps(ctx, [
-        "Pre-cargar 19 donaciones ACEPTADAS + misión Donaciones Exitosas asignada.",
-        "En vivo: completar la 20ª donación aceptada.",
-        "Ejecutar POST /donadores/{id}/procesar en Incentivos.",
-        "Verificar misión completada e insignia otorgada.",
-      ]);
-      ctx.saveResult({ manual: true });
-      return { manual: true };
+      const { seedIncentivosDemo } = await import("./helpers/incentivos-demo.js");
+      const result = await seedIncentivosDemo(ctx);
+      ctx.saveResult(result);
+      ctx.log("info", "Donador listo: " + result.donadorId + " · 19 ACEPTADAS · COLABORADOR");
+      ctx.log("info", "En vivo: 20ª donación ACEPTADA + POST /donadores/{id}/procesar");
+      return result;
     },
   },
 
   I4: {
-    meta: { totalSteps: 4, manualOnly: true },
+    meta: { totalSteps: 15 },
     async run(ctx) {
-      const adv = counter(4, ctx);
-      adv("Preparar donador con 20 ACEPTADAS + insignia");
-      manualSteps(ctx, [
-        "Pre-cargar donador con 20 ACEPTADAS e insignia ganada.",
-        "En vivo: registrar queja → baja a 19 ACEPTADAS.",
-        "Procesar donador → pierde progreso, categoría e insignia.",
-      ]);
-      ctx.saveResult({ manual: true });
-      return { manual: true };
+      const {
+        seedIncentivosDemo,
+        completarVigesimaDonacion,
+      } = await import("./helpers/incentivos-demo.js");
+      const seeded = await seedIncentivosDemo(ctx);
+      const ready = await completarVigesimaDonacion(ctx, seeded);
+      ctx.saveResult(ready);
+      ctx.log(
+        "info",
+        "Donador TRANSFORMADOR con 20 ACEPTADAS. Quejá " +
+          ready.quejaTargetId +
+          " y procesá para volver a COLABORADOR."
+      );
+      return ready;
     },
   },
 
