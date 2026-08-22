@@ -16,11 +16,21 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+function readAdminToken() {
+  try {
+    return sessionStorage.getItem("donatrack.adminSecret") || "";
+  } catch (_) {
+    return "";
+  }
+}
+
 async function requestJson(method, url, body, opts = {}) {
   const timeout = opts.timeout ?? DEFAULT_TIMEOUT_MS;
   const ctrl = new AbortController();
   const timeoutId = setTimeout(() => ctrl.abort(), timeout);
   const headers = { Accept: "application/json" };
+  const token = opts.token || readAdminToken();
+  if (token) headers.Authorization = "Bearer " + token;
   const init = { method, headers, signal: ctrl.signal, cache: "no-store" };
   if (body !== undefined && body !== null) {
     headers["Content-Type"] = "application/json";

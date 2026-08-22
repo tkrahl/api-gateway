@@ -76,6 +76,13 @@ export const MODULE_CATALOG = {
     subtitle: "Repo incentivos",
     service: "incentivos",
     resources: [
+      {
+        id: "demo-clase",
+        label: "Demo de clase",
+        path: "precarga local (sin GET)",
+        absolute: true,
+        view: "incentivos-demo",
+      },
       { id: "misiones", label: "Misiones", path: "/misiones" },
       { id: "insignias", label: "Insignias", path: "/insignias" },
       {
