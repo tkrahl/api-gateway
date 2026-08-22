@@ -807,6 +807,55 @@
         color: var(--text-muted);
       }
 
+      .ops-row.stacked {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .e4-modules {
+        display: grid;
+        gap: 12px;
+      }
+
+      .e4-module {
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+      }
+
+      .e4-module > h3 {
+        margin: 0 0 8px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .e4-module > p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+
+      .e4-parts {
+        display: grid;
+        gap: 10px;
+      }
+
+      .e4-part h4 {
+        margin: 0 0 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dim);
+      }
+
+      .e4-part p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+
       .btn.danger {
         background: var(--down-bg);
         border-color: var(--down-border);
@@ -1140,6 +1189,65 @@
               <button class="btn ghost" id="tokenClearBtn" type="button" hidden>Borrar</button>
             </div>
           </div>
+          <div class="ops-row stacked">
+            <div class="ops-desc">
+              <span class="name">Entrega 4</span>
+              <span class="hint">Bot Telegram, async y nuevas funcionalidades — resumen del enunciado</span>
+            </div>
+            <div class="e4-modules">
+              <article class="e4-module">
+                <h3>Módulo Logística</h3>
+                <div class="e4-parts">
+                  <div class="e4-part">
+                    <h4>Parte A</h4>
+                    <p>
+                      Logística pasa a manejar <strong>stock</strong>. Al recibir una donación se
+                      verifica si hay necesidades insatisfechas de ese producto: si no hay, las
+                      unidades van al stock; si hay, el matchmaking asigna cantidad (esa donación
+                      no “pasa” por el stock) y el sobrante se guarda en stock al momento. Si la
+                      necesidad es mayor a lo donado y es <strong>extraordinaria</strong>, se
+                      asigna igual lo donado; si es <strong>recurrente</strong>, se asigna a otra
+                      necesidad. Pueden existir 2 paquetes con el mismo <code>donacionID</code>.
+                      El reporte de entrega no cambia. Cada depósito tiene capacidad máxima
+                      (entero) y cualquier producto ocupa una unidad.
+                    </p>
+                  </div>
+                  <div class="e4-part">
+                    <h4>Parte B</h4>
+                    <p>
+                      La asignación se simula como un proceso lento: primero se verifica lugar en
+                      el depósito y, si hay, las donaciones van a una <strong>cola de
+                      trabajo</strong>. Uno o más <strong>Workers stateless</strong> (sin DB)
+                      reciben el mensaje, consultan necesidades, calculan la asignación y hacen
+                      POST a Logística para darla de alta. La mensajería debe estar en la nube y
+                      hay que soportar más de un worker.
+                    </p>
+                  </div>
+                </div>
+              </article>
+              <article class="e4-module">
+                <h3>Módulo Donadores y Entidades</h3>
+                <p>
+                  Al crear una necesidad se corrobora en Donaciones que el producto sea válido y
+                  luego se consulta stock en Logística. Si hay stock, se asigna al momento la
+                  cantidad disponible (si la necesidad supera al stock) o la necesaria (si el
+                  stock supera a la necesidad). Debe poder diferenciarse si la asignación vino del
+                  matchmaking o de una solicitud de este módulo, para las misiones de Incentivos.
+                </p>
+              </article>
+              <article class="e4-module">
+                <h3>Módulo Incentivos</h3>
+                <p>
+                  Se incorpora un <strong>Cron-Job</strong> que periódicamente procesa a los
+                  donadores con misiones asignadas. Ahora se puede <strong>perder el progreso</strong>
+                  de una misión: el único caso estudiado es “Donaciones Exitosas” (20 donaciones
+                  en estado <code>ACEPTADA</code>). Si por quejas esa cantidad baja de 20, el
+                  donador pierde todo el progreso, vuelve a esa categoría y se le sacan las
+                  insignias correspondientes.
+                </p>
+              </article>
+            </div>
+          </div>
           <div class="ops-result" id="cleanResult" role="status" aria-live="polite"></div>
         </div>
       </section>
@@ -1225,6 +1333,7 @@
           timerId: null,
           intervalMs: 10000,
           autoRefresh: true,
+          botCooldownUntil: 0,
         };
 
         const els = {
@@ -1763,6 +1872,12 @@
               text: "Sistema degradado — " + down + " servicio(s) caído(s)",
             };
           }
+          if (state.serviceStatus.bot === "WARMING") {
+            return {
+              kind: "DEGRADED",
+              text: "Bot arrancando — Render limitó GET /health (429). Backoff activo.",
+            };
+          }
           return { kind: "LOADING" };
         }
 
@@ -1786,6 +1901,16 @@
           let error = null;
           let via = "direct";
 
+          if (key === "bot" && state.botCooldownUntil && Date.now() < state.botCooldownUntil) {
+            return {
+              key: key,
+              status: "WARMING",
+              ms: 0,
+              error: "Cooldown post-429: no se consulta /health del bot para no alimentar el rate-limit",
+              via: "cooldown",
+            };
+          }
+
           async function attempt(url) {
             const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
             if (!res.ok) throw new Error("HTTP " + res.status);
@@ -1793,9 +1918,20 @@
               const data = await res.json().catch(function () {
                 return null;
               });
-              if (!data || String(data.status || "").toUpperCase() !== "UP") {
-                throw new Error((data && data.error) || "bot /health no UP");
+              const st = data ? String(data.status || "").toUpperCase() : "";
+              if (st === "UP") {
+                state.botCooldownUntil = 0;
+                return;
               }
+              if (st === "WARMING" || (data && data.httpStatus === 429)) {
+                state.botCooldownUntil = Date.now() + 30000;
+                const err = new Error(
+                  (data && data.error) || "Bot en cold start (429 Too Many Requests)"
+                );
+                err.warming = true;
+                throw err;
+              }
+              throw new Error((data && data.error) || "bot /health no UP");
             }
           }
 
@@ -1804,6 +1940,15 @@
             await attempt(direct);
             status = "UP";
           } catch (e1) {
+            if (e1 && e1.warming) {
+              return {
+                key: key,
+                status: "WARMING",
+                ms: Math.round(performance.now() - started),
+                error: e1.message,
+                via: via,
+              };
+            }
             const fallback = healthUrlViaGateway(key);
             if (fallback) {
               try {
@@ -1838,7 +1983,7 @@
             result.status === "UP" || result.status === "DOWN" ? result.status : null
           );
 
-          if (result.status === "DOWN") {
+          if (result.status === "DOWN" || result.status === "WARMING") {
             let msg = result.error || "Sin detalle";
             if (result.via === "gateway" && result.key !== "gateway") {
               msg = result.error || "Falló directo y vía gateway";

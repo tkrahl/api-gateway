@@ -45,8 +45,13 @@ export const MODULE_CATALOG = {
     subtitle: "Repo logistica",
     service: "logistica",
     resources: [
-      { id: "depositos", label: "Depósitos", path: "/depositos" },
-      { id: "depositos-stock", label: "Stock (todos)", path: "/depositos/stock" },
+      { id: "depositos", label: "Depósitos", path: "/depositos", view: "depositos" },
+      {
+        id: "depositos-stock",
+        label: "Stock por producto",
+        path: "/depositos/stock",
+        params: [{ name: "productoID", label: "productoID", required: true }],
+      },
       { id: "asignaciones", label: "Asignaciones", path: "/asignaciones" },
       { id: "paquetes", label: "Paquetes", path: "/paquetes" },
       {

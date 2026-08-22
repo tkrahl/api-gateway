@@ -444,6 +444,92 @@
       .side-logout .btn {
         width: 100%;
       }
+      .btn.sm {
+        padding: 5px 9px;
+        font-size: 12px;
+      }
+      .dep-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .dep-stat {
+        background: var(--bg-elev-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .dep-stat .k {
+        font-size: 11px;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-weight: 650;
+      }
+      .dep-stat .v {
+        margin-top: 6px;
+        font-size: 16px;
+        font-weight: 650;
+        word-break: break-word;
+      }
+      .dep-stat .hint {
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+      }
+      .occupancy {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 88px;
+      }
+      .occupancy-bar {
+        height: 7px;
+        border-radius: 99px;
+        background: #1e2740;
+        overflow: hidden;
+      }
+      .occupancy-bar > i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+      }
+      .occupancy-bar.full > i {
+        background: #f59e0b;
+      }
+      .section-title {
+        margin: 16px 0 8px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .section-title:first-child {
+        margin-top: 0;
+      }
+      table.data td.wrap {
+        white-space: normal;
+        max-width: 360px;
+      }
+      .pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 650;
+        background: rgba(77, 140, 255, 0.16);
+        color: #cfe2ff;
+      }
+      .pill.warn {
+        background: rgba(245, 158, 11, 0.18);
+        color: #fbbf24;
+      }
+      .pill.ok {
+        background: rgba(34, 197, 94, 0.16);
+        color: #86efac;
+      }
     </style>
   </head>
   <body>
@@ -491,7 +577,7 @@
         <div class="content-top">
           <div>
             <h2 id="pageTitle">Recursos</h2>
-            <div class="subtitle">GET vía gateway · clic en una celda para copiar</div>
+            <div class="subtitle">GET vía gateway · en Depósitos, abrí uno para ver el stock</div>
           </div>
         </div>
 
@@ -507,6 +593,7 @@
                 <div class="meta" id="resourcePath">—</div>
               </div>
               <div class="actions">
+                <button class="btn" id="backBtn" type="button" hidden>← Depósitos</button>
                 <button class="btn" id="copyBtn" type="button" disabled>Copiar</button>
                 <button class="btn primary" id="refreshBtn" type="button" disabled>
                   <span class="spinner" aria-hidden="true"></span>
@@ -554,6 +641,7 @@
         tableWrap: document.getElementById("tableWrap"),
         copyBtn: document.getElementById("copyBtn"),
         refreshBtn: document.getElementById("refreshBtn"),
+        backBtn: document.getElementById("backBtn"),
         toast: document.getElementById("toast"),
       };
 
@@ -566,6 +654,7 @@
       let lastPayload = null;
       let lastRows = [];
       let lastColumns = [];
+      let depositDetailId = null;
 
       function escapeHtml(str) {
         return String(str == null ? "" : str)
@@ -742,6 +831,300 @@
         return { mode: "scalar", rows: [{ valor: data }], columns: ["valor"] };
       }
 
+      function isDepositosView(resource) {
+        return resource && resource.view === "depositos";
+      }
+
+      function asList(value) {
+        return Array.isArray(value) ? value : [];
+      }
+
+      function stockUnits(stock) {
+        return asList(stock).reduce(function (sum, p) {
+          return sum + (Number(p && p.cantidad) || 0);
+        }, 0);
+      }
+
+      function occupancyPct(deposito) {
+        const cap = Number(deposito && deposito.capacidadMaxima);
+        const used = stockUnits(deposito && deposito.stockActual);
+        if (!cap || cap <= 0) return null;
+        return Math.min(100, Math.round((used / cap) * 100));
+      }
+
+      function stockByProducto(stock) {
+        const map = {};
+        asList(stock).forEach(function (p) {
+          const key = (p && (p.producto || p.productoID)) || "(sin producto)";
+          map[key] = (map[key] || 0) + (Number(p && p.cantidad) || 0);
+        });
+        return Object.keys(map)
+          .sort()
+          .map(function (producto) {
+            return { producto: producto, unidades: map[producto] };
+          });
+      }
+
+      function stockSummary(stock) {
+        const groups = stockByProducto(stock);
+        if (!groups.length) return "vacío";
+        return groups
+          .map(function (g) {
+            return g.producto + ": " + g.unidades;
+          })
+          .join(" · ");
+      }
+
+      function occupancyHtml(deposito) {
+        const used = stockUnits(deposito && deposito.stockActual);
+        const cap = deposito && deposito.capacidadMaxima != null ? deposito.capacidadMaxima : "—";
+        const pct = occupancyPct(deposito);
+        if (pct == null) {
+          return escapeHtml(String(used)) + " / " + escapeHtml(String(cap));
+        }
+        const full = pct >= 90 ? " full" : "";
+        return (
+          '<div class="occupancy" title="' +
+          used +
+          " / " +
+          cap +
+          '">' +
+          '<div class="occupancy-bar' +
+          full +
+          '"><i style="width:' +
+          pct +
+          '%"></i></div>' +
+          "<span>" +
+          used +
+          " / " +
+          escapeHtml(String(cap)) +
+          " · " +
+          pct +
+          "%</span></div>"
+        );
+      }
+
+      function depositoIdFromHash() {
+        const match = String(location.hash || "").match(/^#deposito\/(.+)$/);
+        return match ? decodeURIComponent(match[1]) : null;
+      }
+
+      function setDepositoHash(id) {
+        const next = id
+          ? location.pathname + location.search + "#deposito/" + encodeURIComponent(id)
+          : location.pathname + location.search;
+        const current = location.pathname + location.search + (location.hash || "");
+        if (current === next) return;
+        history.replaceState(null, "", next);
+      }
+
+      function setBackVisible(visible) {
+        if (!els.backBtn) return;
+        els.backBtn.hidden = !visible;
+      }
+
+      function renderHtmlTable(columns, rows, wrapCols) {
+        wrapCols = wrapCols || {};
+        lastRows = rows;
+        lastColumns = columns;
+        if (!rows.length) {
+          return '<div class="empty">Sin resultados.</div>';
+        }
+        const head =
+          "<thead><tr>" +
+          columns
+            .map(function (c) {
+              return "<th>" + escapeHtml(c) + "</th>";
+            })
+            .join("") +
+          "</tr></thead>";
+        const body =
+          "<tbody>" +
+          rows
+            .map(function (row) {
+              return (
+                "<tr>" +
+                columns
+                  .map(function (col) {
+                    if (row["__html:" + col]) {
+                      return "<td class='wrap'>" + row["__html:" + col] + "</td>";
+                    }
+                    const raw = cellValue(row[col]);
+                    const wrap = wrapCols[col] ? " wrap" : "";
+                    return (
+                      '<td class="cell-copy' +
+                      wrap +
+                      '" title="Clic para copiar" data-copy="' +
+                      escapeHtml(raw) +
+                      '">' +
+                      escapeHtml(raw) +
+                      "</td>"
+                    );
+                  })
+                  .join("") +
+                "</tr>"
+              );
+            })
+            .join("") +
+          "</tbody>";
+        return '<table class="data">' + head + body + "</table>";
+      }
+
+      function renderDepositosList(depositos) {
+        setBackVisible(false);
+        const rows = asList(depositos).map(function (d) {
+          const stock = asList(d && d.stockActual);
+          return {
+            "": "",
+            nombre: d && d.nombre,
+            id: d && d.id,
+            algoritmo: d && d.algoritmo,
+            direccion: d && d.direccion,
+            paquetes: stock.length,
+            stock: stockSummary(stock),
+            ocupación: "",
+            "__html:ocupación": occupancyHtml(d),
+            "__html:":
+              '<button type="button" class="btn sm primary" data-open-deposito="' +
+              escapeHtml(d && d.id) +
+              '">Ver stock</button>',
+          };
+        });
+        const columns = [
+          "",
+          "nombre",
+          "id",
+          "algoritmo",
+          "direccion",
+          "paquetes",
+          "stock",
+          "ocupación",
+        ];
+        if (!rows.length) {
+          lastRows = [];
+          lastColumns = [];
+          els.tableWrap.innerHTML =
+            '<div class="empty">No hay depósitos. Creá uno con POST /depositos.</div>';
+          return;
+        }
+        els.tableWrap.innerHTML = renderHtmlTable(columns, rows, { stock: true, direccion: true });
+      }
+
+      function renderDepositoDetail(deposito) {
+        setBackVisible(true);
+        const stock = asList(deposito && deposito.stockActual);
+        const units = stockUnits(stock);
+        const groups = stockByProducto(stock);
+        const cap = deposito && deposito.capacidadMaxima != null ? deposito.capacidadMaxima : "—";
+        const pct = occupancyPct(deposito);
+        const stats =
+          '<div class="dep-stats">' +
+          '<div class="dep-stat"><div class="k">Depósito</div><div class="v">' +
+          escapeHtml((deposito && deposito.nombre) || "(sin nombre)") +
+          '</div><div class="hint">' +
+          escapeHtml((deposito && deposito.id) || "") +
+          "</div></div>" +
+          '<div class="dep-stat"><div class="k">Algoritmo MM</div><div class="v">' +
+          escapeHtml((deposito && deposito.algoritmo) || "—") +
+          "</div></div>" +
+          '<div class="dep-stat"><div class="k">Dirección</div><div class="v">' +
+          escapeHtml((deposito && deposito.direccion) || "—") +
+          "</div></div>" +
+          '<div class="dep-stat"><div class="k">Ocupación</div><div class="v">' +
+          units +
+          " / " +
+          escapeHtml(String(cap)) +
+          (pct == null ? "" : " · " + pct + "%") +
+          '</div><div class="hint">' +
+          occupancyHtml(deposito) +
+          "</div></div>" +
+          '<div class="dep-stat"><div class="k">Paquetes en stock</div><div class="v">' +
+          stock.length +
+          '</div><div class="hint">' +
+          units +
+          " unidad" +
+          (units === 1 ? "" : "es") +
+          "</div></div>" +
+          "</div>";
+
+        const resumenRows = groups.map(function (g) {
+          return { producto: g.producto, unidades: g.unidades };
+        });
+        const paqueteRows = stock.map(function (p) {
+          return {
+            id: p && p.id,
+            producto: p && (p.producto || p.productoID),
+            cantidad: p && p.cantidad,
+            donacionID: p && p.donacionID,
+            asignado: p && p.asignado,
+            depositoID: p && p.depositoID,
+          };
+        });
+
+        const resumenHtml = groups.length
+          ? renderHtmlTable(["producto", "unidades"], resumenRows, { producto: true })
+          : '<div class="empty">Sin productos en stock.</div>';
+        const paquetesHtml = stock.length
+          ? renderHtmlTable(
+              ["id", "producto", "cantidad", "donacionID", "asignado", "depositoID"],
+              paqueteRows,
+              { producto: true, id: true, donacionID: true }
+            )
+          : '<div class="empty">Este depósito no tiene paquetes en stockActual.</div>';
+
+        lastRows = paqueteRows;
+        lastColumns = stock.length
+          ? ["id", "producto", "cantidad", "donacionID", "asignado", "depositoID"]
+          : [];
+
+        els.tableWrap.innerHTML =
+          stats +
+          '<div class="section-title">Stock actual por producto</div>' +
+          resumenHtml +
+          '<div class="section-title">Contenido (paquetes)</div>' +
+          paquetesHtml;
+      }
+
+      function showDepositoFromList(id) {
+        const list = asList(lastPayload);
+        const found = list.find(function (d) {
+          return d && String(d.id) === String(id);
+        });
+        if (!found) {
+          showToast("No está en el listado; recargá");
+          return;
+        }
+        depositDetailId = String(found.id);
+        setDepositoHash(depositDetailId);
+        els.resourceTitle.textContent = "Depósito · " + (found.nombre || found.id);
+        els.resourcePath.textContent =
+          "GET /api/logistica/depositos/" + encodeURIComponent(found.id);
+        els.status.textContent =
+          stockUnits(found.stockActual) +
+          " unidad" +
+          (stockUnits(found.stockActual) === 1 ? "" : "es") +
+          " en " +
+          asList(found.stockActual).length +
+          " paquete" +
+          (asList(found.stockActual).length === 1 ? "" : "s");
+        els.status.classList.remove("error");
+        renderDepositoDetail(found);
+        els.copyBtn.disabled = !asList(found.stockActual).length;
+      }
+
+      function closeDepositoDetail() {
+        depositDetailId = null;
+        setDepositoHash("");
+        if (!isDepositosView(activeResource)) return;
+        els.resourceTitle.textContent = activeResource.label;
+        els.resourcePath.textContent = "GET " + resolveUrl(activeResource, {});
+        renderDepositosList(lastPayload);
+        const count = asList(lastPayload).length;
+        els.status.textContent =
+          "OK · " + count + " depósito" + (count === 1 ? "" : "s") + " · clic en Ver stock";
+        els.copyBtn.disabled = count === 0;
+      }
+
       function renderTable(normalized) {
         lastRows = normalized.rows;
         lastColumns = normalized.columns;
@@ -787,7 +1170,13 @@
         const switching = !activeResource || activeResource.id !== resource.id;
         activeResource = resource;
         renderResourceList();
-        if (switching) renderParamsBar(resource);
+        if (switching) {
+          renderParamsBar(resource);
+          if (!isDepositosView(resource)) {
+            depositDetailId = null;
+            setBackVisible(false);
+          }
+        }
 
         const values = readParamValues(resource);
         const needs = []
@@ -864,20 +1253,66 @@
             );
           }
           lastPayload = data;
-          const normalized = normalizeRows(data);
-          renderTable(normalized);
-          const count = Array.isArray(data) ? data.length : normalized.rows.length;
-          els.status.textContent =
-            "OK · " +
-            count +
-            (Array.isArray(data)
-              ? " ítem" + (count === 1 ? "" : "s")
-              : " fila" + (count === 1 ? "" : "s"));
-          if (Array.isArray(data) && data.length === 0) {
+          if (isDepositosView(resource)) {
+            const wanted = depositDetailId || depositoIdFromHash();
+            const list = asList(data);
+            const found = wanted
+              ? list.find(function (d) {
+                  return d && String(d.id) === String(wanted);
+                })
+              : null;
+            if (found) {
+              depositDetailId = String(found.id);
+              setDepositoHash(depositDetailId);
+              els.resourceTitle.textContent = "Depósito · " + (found.nombre || found.id);
+              els.resourcePath.textContent =
+                "GET /api/logistica/depositos/" + encodeURIComponent(found.id);
+              renderDepositoDetail(found);
+              const units = stockUnits(found.stockActual);
+              const n = asList(found.stockActual).length;
+              els.status.textContent =
+                "OK · " +
+                units +
+                " unidad" +
+                (units === 1 ? "" : "es") +
+                " en " +
+                n +
+                " paquete" +
+                (n === 1 ? "" : "s");
+              els.copyBtn.disabled = n === 0;
+            } else {
+              depositDetailId = null;
+              if (wanted) setDepositoHash("");
+              renderDepositosList(data);
+              const count = list.length;
+              els.status.textContent =
+                "OK · " +
+                count +
+                " depósito" +
+                (count === 1 ? "" : "s") +
+                (count ? " · Ver stock para el contenido" : "");
+              if (count === 0) {
+                els.status.textContent =
+                  "OK · lista vacía ([]). No hay depósitos todavía.";
+              }
+              els.copyBtn.disabled = count === 0;
+            }
+          } else {
+            const normalized = normalizeRows(data);
+            renderTable(normalized);
+            const count = Array.isArray(data) ? data.length : normalized.rows.length;
             els.status.textContent =
-              "OK · lista vacía ([]). No hay datos en este recurso todavía.";
+              "OK · " +
+              count +
+              (Array.isArray(data)
+                ? " ítem" + (count === 1 ? "" : "s")
+                : " fila" + (count === 1 ? "" : "s"));
+            if (Array.isArray(data) && data.length === 0) {
+              els.status.textContent =
+                "OK · lista vacía ([]). No hay datos en este recurso todavía.";
+            }
+            els.copyBtn.disabled = false;
           }
-          els.copyBtn.disabled = false;
         } catch (err) {
           lastPayload = null;
           lastRows = [];
@@ -936,6 +1371,12 @@
         if (activeResource) loadResource(activeResource);
       });
 
+      if (els.backBtn) {
+        els.backBtn.addEventListener("click", function () {
+          closeDepositoDetail();
+        });
+      }
+
       els.copyBtn.addEventListener("click", function () {
         const text = buildTsv();
         if (!text) return;
@@ -945,12 +1386,27 @@
       });
 
       els.tableWrap.addEventListener("click", function (event) {
+        const openBtn = event.target.closest("[data-open-deposito]");
+        if (openBtn) {
+          showDepositoFromList(openBtn.getAttribute("data-open-deposito"));
+          return;
+        }
         const cell = event.target.closest("td.cell-copy");
         if (!cell) return;
         const value = cell.getAttribute("data-copy") || cell.textContent || "";
         copyText(value).then(function () {
           showToast("Valor copiado");
         });
+      });
+
+      window.addEventListener("hashchange", function () {
+        if (!isDepositosView(activeResource)) return;
+        const id = depositoIdFromHash();
+        if (id) {
+          showDepositoFromList(id);
+        } else if (depositDetailId) {
+          closeDepositoDetail();
+        }
       });
 
       renderModulesNav();
